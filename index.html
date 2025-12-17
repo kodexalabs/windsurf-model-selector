@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Windsurf Model Selector v3.0">
+    <meta property="og:description" content="Smart model selection for Windsurf IDE - Analyze your task and get optimal model recommendations with cost tracking">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <title>Windsurf Model Selector v3.0 - Smart AI Model Selection</title>
+    
+    <style>
+        /* ========================================
+           DESIGN SYSTEM - DARK MODE (AMOLED)
+           Samsung S22 Optimized
+        ======================================== */
+        
+        :root {
+            /* AMOLED True Black for Samsung S22 */
+            --bg-body: #000000;
+            --bg-card: #0a0a0a;
+            --bg-elevated: #141414;
+            --bg-hover: #1a1a1a;
+            --bg-input: #0f0f0f;
+            
+            /* Text Colors */
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-muted: #737373;
+            
+            /* Primary Accent */
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.1);
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --error: #ef4444;
+            --error-light: rgba(239, 68, 68, 0.1);
+            --info: #06b6d4;
+            --info-light: rgba(6, 182, 212, 0.1);
+            
+            /* Model Category Colors */
+            --workhorse: #8b5cf6;
+            --premium: #f59e0b;
+            --budget: #10b981;
+            --free: #6b7280;
+            --planning: #ec4899;
+            --avoid: #ef4444;
+            --speed: #06b6d4;
+            --balanced: #3b82f6;
+            
+            /* Borders */
+            --border: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --border-focus: rgba(59, 130, 246, 0.5);
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+            --space-8: 48px;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* ========================================
+           RESET & BASE STYLES
+        ======================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: var(--space-4);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ========================================
+           TYPOGRAPHY
+        ======================================== */
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.02em;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-3);
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+        }
+        
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .grid {
+            display: grid;
+            gap: var(--space-5);
+        }
+        
+        .grid-2 {
+            grid-template-columns: 1fr 350px;
+        }
+        
+        /* ========================================
+           HEADER
+        ======================================== */
+        
+        header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+            padding: var(--space-6) 0;
+        }
+        
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .version-badge {
+            display: inline-block;
+            padding: var(--space-1) var(--space-3);
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: var(--space-2);
+        }
+        
+        /* ========================================
+           TABS
+        ======================================== */
+        
+        .tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: var(--space-4);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab-btn {
+            padding: var(--space-3) var(--space-5);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-base);
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--bg-card);
+        }
+        
+        .tab-btn .badge {
+            display: inline-block;
+            margin-left: var(--space-2);
+            padding: 2px var(--space-2);
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn var(--transition-base);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ========================================
+           CARDS
+        ======================================== */
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            transition: all var(--transition-base);
+        }
+        
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card-elevated {
+            background: var(--bg-elevated);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* ========================================
+           INPUT SECTION
+        ======================================== */
+        
+        .input-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            font-size: 0.9375rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: var(--space-4);
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all var(--transition-base);
+        }
+        
+        textarea:hover {
+            border-color: var(--border-hover);
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .input-hint {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: var(--space-2);
+        }
+        
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-5);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            min-height: 44px; /* Touch target */
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--primary-glow);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        /* ========================================
+           AUTO MODE TOGGLE
+        ======================================== */
+        
+        .auto-mode-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-5);
+            border: 1px solid var(--border);
+        }
+        
+        .auto-mode-info {
+            flex: 1;
+        }
+        
+        .auto-mode-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .auto-mode-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-hover);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-base);
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: all var(--transition-base);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background: white;
+        }
+        
+        /* ========================================
+           PRESETS
+        ======================================== */
+        
+        .presets-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .preset-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-4);
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            min-height: 100px;
+            text-align: center;
+        }
+        
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+        
+        .preset-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .preset-icon {
+            font-size: 2rem;
+        }
+        
+        .preset-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .preset-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* ========================================
+           TRIANGLE SELECTOR
+        ======================================== */
+        
+        .manual-control {
+            margin-top: var(--space-5);
+        }
+        
+        .manual-control.hidden {
+            display: none;
+        }
+        
+        .triangle-canvas {
+            display: block;
+            margin: 0 auto var(--space-4);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-input);
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto;
+            touch-action: none; /* Prevent default touch behaviors */
+        }
+        
+        .triangle-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .legend-item {
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 0.875rem;
+            border: 1px solid;
+        }
+        
+        .legend-item strong {
+            display: block;
+            margin-bottom: var(--space-1);
+            font-size: 0.9375rem;
+        }
+        
+        .legend-item span {
+            display: block;
+            font-size: 0.8125rem;
+            opacity: 0.8;
+        }
+        
+        .legend-item.quality {
+            background: var(--error-light);
+            color: var(--error);
+            border-color: var(--error);
+        }
+        
+        .legend-item.speed {
+            background: var(--success-light);
+            color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .legend-item.balanced {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .triangle-controls {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+            flex-wrap: wrap;
+        }
+        
+        /* ========================================
+           RESULTS
+        ======================================== */
+        
+        .results-section {
+            margin-top: var(--space-8);
+        }
+        
+        .results-section.hidden {
+            display: none;
+        }
+        
+        .analysis-breakdown {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+        
+        .analysis-item {
+            text-align: center;
+        }
+        
+        .analysis-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .analysis-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .model-recommendations {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        .model-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        .model-card.rank-1::before {
+            background: linear-gradient(180deg, var(--success) 0%, var(--primary) 100%);
+        }
+        
+        .model-card.rank-2::before {
+            background: var(--primary);
+        }
+        
+        .model-card.rank-3::before {
+            background: var(--warning);
+        }
+        
+        .model-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .model-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+            gap: var(--space-3);
+        }
+        
+        .model-info {
+            flex: 1;
+        }
+        
+        .model-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .model-provider {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .model-rank {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .model-rank.rank-1 {
+            background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%);
+            color: white;
+        }
+        
+        .model-rank.rank-2 {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .model-rank.rank-3 {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+        
+        .model-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .metric {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .metric-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .model-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+        
+        .tag {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .tag-workhorse {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--workhorse);
+            border: 1px solid var(--workhorse);
+        }
+        
+        .tag-premium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--premium);
+            border: 1px solid var(--premium);
+        }
+        
+        .tag-budget {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--budget);
+            border: 1px solid var(--budget);
+        }
+        
+        .tag-free {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--free);
+            border: 1px solid var(--free);
+        }
+        
+        .tag-planning {
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--planning);
+            border: 1px solid var(--planning);
+        }
+        
+        .tag-promo {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .model-description {
+            margin-bottom: var(--space-4);
+        }
+        
+        .model-description h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .model-description p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .model-warning {
+            padding: var(--space-3);
+            background: var(--error-light);
+            border: 1px solid var(--error);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-3);
+        }
+        
+        .model-warning-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--error);
+            margin-bottom: var(--space-1);
+        }
+        
+        .model-warning-text {
+            font-size: 0.8125rem;
+            color: var(--error);
+        }
+        
+        /* ========================================
+           BUDGET TRACKER (SIDEBAR)
+        ======================================== */
+        
+        .budget-tracker {
+            position: sticky;
+            top: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            height: fit-content;
+        }
+        
+        .budget-header {
+            margin-bottom: var(--space-5);
+        }
+        
+        .budget-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .budget-progress {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto var(--space-4);
+        }
+        
+        .budget-circle {
+            transform: rotate(-90deg);
+        }
+        
+        .budget-circle-bg {
+            fill: none;
+            stroke: var(--bg-hover);
+            stroke-width: 10;
+        }
+        
+        .budget-circle-fill {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset var(--transition-slow);
+        }
+        
+        .budget-circle-fill.warning {
+            stroke: var(--warning);
+        }
+        
+        .budget-circle-fill.critical {
+            stroke: var(--error);
+        }
+        
+        .budget-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .budget-percent {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .budget-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        .budget-stats {
+            display: grid;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .budget-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3);
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+        }
+        
+        .budget-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .budget-stat-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .budget-actions {
+            margin-top: var(--space-4);
+            display: grid;
+            gap: var(--space-2);
+        }
+        
+        /* ========================================
+           TOAST NOTIFICATIONS
+        ======================================== */
+        
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            max-width: 400px;
+        }
+        
+        .toast {
+            padding: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+            animation: slideIn var(--transition-base);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .toast.info {
+            border-left: 4px solid var(--info);
+        }
+        
+        /* ========================================
+           RESPONSIVE DESIGN
+        ======================================== */
+        
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .budget-tracker {
+                position: relative;
+                top: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-3);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            .presets-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .preset-btn {
+                min-height: 80px;
+                padding: var(--space-3);
+            }
+            
+            .preset-icon {
+                font-size: 1.5rem;
+            }
+            
+            .model-metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                text-align: left;
+            }
+            
+            .presets-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header role="banner">
+            <h1>🧠 Windsurf Model Selector</h1>
+            <p class="subtitle">Smart AI model selection for Windsurf IDE - Analyze your task and get optimal recommendations</p>
+            <span class="version-badge">v3.0 - December 2025</span>
+        </header>
+
+        <!-- Main Content -->
+        <main role="main">
+            <!-- Tabs -->
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="windsurf-tab" id="windsurf-tab-btn" onclick="switchTab('windsurf')">
+                    Windsurf <span class="badge">16 models</span>
+                </button>
+                <button class="tab-btn" role="tab" aria-selected="false" aria-controls="byok-tab" id="byok-tab-btn" onclick="switchTab('byok')">
+                    BYOK <span class="badge">6 models</span>
+                </button>
+            </div>
+
+            <div class="grid grid-2">
+                <!-- Left Column: Main Content -->
+                <div>
+                    <!-- Windsurf Tab -->
+                    <div id="windsurf-tab" class="tab-content active" role="tabpanel" aria-labelledby="windsurf-tab-btn">
+                        <!-- Auto Mode Toggle -->
+                        <div class="auto-mode-section">
+                            <div class="auto-mode-info">
+                                <div class="auto-mode-title">🤖 Auto-Detect Mode</div>
+                                <div class="auto-mode-desc">Automatically analyze your task and recommend optimal models</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-mode-windsurf" checked onchange="toggleAutoMode('windsurf')" aria-label="Toggle auto-detect mode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Presets -->
+                        <div class="presets-section">
+                            <h3>Quick Presets</h3>
+                            <div class="presets-grid" id="presets-windsurf">
+                                <!-- Presets will be dynamically generated -->
+                            </div>
+                        </div>
+
+                        <!-- Manual Control (Triangle) -->
+                        <div id="manual-control-windsurf" class="manual-control hidden">
+                            <h3>Manual Preference Control</h3>
+                            <p class="input-hint">Drag the dot to set your preferences. Use arrow keys for precise control. Double-tap to reset.</p>
+                            <canvas id="triangle-canvas-windsurf" class="triangle-canvas" width="400" height="350" tabindex="0" role="img" aria-label="Triangle selector for model preferences"></canvas>
+                            <div class="triangle-legend">
+                                <div class="legend-item quality">
+                                    <strong>Quality</strong>
+                                    <span>Best results, slower</span>
+                                </div>
+                                <div class="legend-item speed">
+                                    <strong>Speed/Cost</strong>
+                                    <span>Fast, economical</span>
+                                </div>
+                                <div class="legend-item balanced">
+                                    <strong>Balanced</strong>
+                                    <span>Mix of both</span>
+                                </div>
+                            </div>
+                            <div class="triangle-controls">
+                                <button class="btn btn-secondary" onclick="resetTriangle('windsurf')">Reset to Center</button>
+                            </div>
+                        </div>
+
+                        <!-- Input Section -->
+                        <div class="input-section">
+                            <label for="windsurf-input" class="input-label">Describe Your Task</label>
+                            <textarea 
+                                id="windsurf-input" 
+                                placeholder="Example: 'Refactor authentication system with 10 files' or 'Quick fix in Header.jsx' or 'Plan microservices architecture'"
+                                aria-describedby="windsurf-input-hint"
+                            ></textarea>
+                            <p id="windsurf-input-hint" class="input-hint">
+                                💡 Tip: Mention complexity, urgency, budget constraints, or specific files for better recommendations
+                            </p>
+                        </div>
+
+                        <!-- Analyze Button -->
+                        <button class="btn btn-primary btn-full" onclick="analyzeWindsurf()">
+                            <span>✨ Analyze & Get Recommendations</span>
+                        </button>
+
+                        <!-- Results -->
+                        <div id="windsurf-results" class="results-section hidden" role="region" aria-live="polite">
+                            <!-- Results will be dynamically generated -->
+                        </div>
+                    </div>
+
+                    <!-- BYOK Tab -->
+                    <div id="byok-tab" class="tab-content" role="tabpanel" aria-labelledby="byok-tab-btn">
+                        <!-- Auto Mode Toggle -->
+                        <div class="auto-mode-section">
+                            <div class="auto-mode-info">
+                                <div class="auto-mode-title">🤖 Auto-Detect Mode</div>
+                                <div class="auto-mode-desc">Automatically analyze your task and recommend optimal models</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-mode-byok" checked onchange="toggleAutoMode('byok')" aria-label="Toggle auto-detect mode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Presets -->
+                        <div class="presets-section">
+                            <h3>Quick Presets</h3>
+                            <div class="presets-grid" id="presets-byok">
+                                <!-- Presets will be dynamically generated -->
+                            </div>
+                        </div>
+
+                        <!-- Manual Control (Triangle) -->
+                        <div id="manual-control-byok" class="manual-control hidden">
+                            <h3>Manual Preference Control</h3>
+                            <p class="input-hint">Drag the dot to set your preferences. Use arrow keys for precise control. Double-tap to reset.</p>
+                            <canvas id="triangle-canvas-byok" class="triangle-canvas" width="400" height="350" tabindex="0" role="img" aria-label="Triangle selector for model preferences"></canvas>
+                            <div class="triangle-legend">
+                                <div class="legend-item quality">
+                                    <strong>Quality</strong>
+                                    <span>Best results, slower</span>
+                                </div>
+                                <div class="legend-item speed">
+                                    <strong>Speed/Cost</strong>
+                                    <span>Fast, economical</span>
+                                </div>
+                                <div class="legend-item balanced">
+                                    <strong>Balanced</strong>
+                                    <span>Mix of both</span>
+                                </div>
+                            </div>
+                            <div class="triangle-controls">
+                                <button class="btn btn-secondary" onclick="resetTriangle('byok')">Reset to Center</button>
+                            </div>
+                        </div>
+
+                        <!-- Input Section -->
+                        <div class="input-section">
+                            <label for="byok-input" class="input-label">Describe Your Task</label>
+                            <textarea 
+                                id="byok-input" 
+                                placeholder="Example: 'Refactor authentication system with 10 files' or 'Quick fix in Header.jsx' or 'Plan microservices architecture'"
+                                aria-describedby="byok-input-hint"
+                            ></textarea>
+                            <p id="byok-input-hint" class="input-hint">
+                                💡 Tip: BYOK models use your own API keys. Check pricing on provider websites.
+                            </p>
+                        </div>
+
+                        <!-- Analyze Button -->
+                        <button class="btn btn-primary btn-full" onclick="analyzeByok()">
+                            <span>✨ Analyze & Get Recommendations</span>
+                        </button>
+
+                        <!-- Results -->
+                        <div id="byok-results" class="results-section hidden" role="region" aria-live="polite">
+                            <!-- Results will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Budget Tracker -->
+                <aside class="budget-tracker" role="complementary" aria-label="Budget tracker">
+                    <div class="budget-header">
+                        <h3 class="budget-title">💰 Budget Tracker</h3>
+                    </div>
+
+                    <!-- Circular Progress -->
+                    <div class="budget-progress">
+                        <svg class="budget-circle" viewBox="0 0 160 160">
+                            <circle class="budget-circle-bg" cx="80" cy="80" r="70"></circle>
+                            <circle id="budget-circle-fill" class="budget-circle-fill" cx="80" cy="80" r="70" 
+                                    stroke-dasharray="440" stroke-dashoffset="440"></circle>
+                        </svg>
+                        <div class="budget-text">
+                            <div id="budget-percent" class="budget-percent">0%</div>
+                            <div class="budget-label">Used</div>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="budget-stats">
+                        <div class="budget-stat">
+                            <span class="budget-stat-label">Credits Used</span>
+                            <span id="budget-used" class="budget-stat-value">0</span>
+                        </div>
+                        <div class="budget-stat">
+                            <span class="budget-stat-label">Remaining</span>
+                            <span id="budget-remaining" class="budget-stat-value">500</span>
+                        </div>
+                        <div class="budget-stat">
+                            <span class="budget-stat-label">Monthly Limit</span>
+                            <span id="budget-limit" class="budget-stat-value">500</span>
+                        </div>
+                    </div>
+
+                    <!-- Alert -->
+                    <div id="budget-alert" class="budget-alert hidden">
+                        <div class="budget-alert-title">⚠️ Budget Alert</div>
+                        <div class="budget-alert-text">You've used 75% of your monthly budget</div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="budget-actions">
+                        <button class="btn btn-secondary btn-full" onclick="exportResults()">📤 Export Results</button>
+                        <button class="btn btn-secondary btn-full" onclick="resetBudget()">🔄 Reset Budget</button>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+    <script>
+        // ========================================
+        // MODEL DATABASE - December 2025 Accurate Data
+        // ========================================
+        
+        const WINDSURF_MODELS = {
+            // IN-HOUSE MODELS
+            'swe-1.5': {
+                name: 'SWE-1.5',
+                provider: 'Windsurf',
+                cost: 0.5,
+                speed: 9,
+                quality: 8.5,
+                context: '16K',
+                bestFor: 'Execution, backend/frontend work, refactoring',
+                avoid: 'Complex architectural planning',
+                category: 'workhorse',
+                promo: true,
+                promoNote: 'Limited time promo pricing',
+                communityRating: 9.5,
+                description: 'Near Claude 4.5-level performance at 13x the speed. Best bang for buck. Use 80% of the time.'
+            },
+            'swe-1.5-mini': {
+                name: 'SWE-1.5-mini',
+                provider: 'Windsurf',
+                cost: 0.25,
+                speed: 8,
+                quality: 6.5,
+                context: '16K',
+                bestFor: 'Trivial fixes, tests, simple completions',
+                avoid: 'Complex logic, debugging',
+                category: 'budget',
+                communityRating: 8.0,
+                description: 'Fast and economical for simple tasks. Perfect for quick edits and trivial fixes.'
+            },
+            'swe-1': {
+                name: 'SWE-1',
+                provider: 'Windsurf',
+                cost: 1.0,
+                speed: 7,
+                quality: 7.5,
+                context: '16K',
+                bestFor: 'Full software engineering lifecycle',
+                avoid: 'When SWE-1.5 is available',
+                category: 'balanced',
+                communityRating: 7.5,
+                description: 'Claude 3.5-level performance at a fraction of the cost. Solid choice when SWE-1.5 is unavailable.'
+            },
+            
+            // ANTHROPIC MODELS
+            'claude-4.5': {
+                name: 'Claude Sonnet 4.5',
+                provider: 'Anthropic',
+                cost: 2.0,
+                speed: 5,
+                quality: 9.5,
+                context: '1M',
+                bestFor: 'Complex debugging, legacy code, architectural review',
+                avoid: 'Simple tasks, speed-critical work',
+                category: 'premium',
+                communityRating: 9.0,
+                description: 'Most capable model in Windsurf. 1M token context window. Significantly better for debugging. Use 4% of the time.',
+                contextWindow: '1M tokens (new!)'
+            },
+            'claude-3.7': {
+                name: 'Claude Sonnet 3.7',
+                provider: 'Anthropic',
+                cost: 1.0,
+                speed: 6,
+                quality: 8.0,
+                context: '200K',
+                bestFor: 'Planning, general coding, test writing',
+                avoid: 'Very deep architectural planning',
+                category: 'balanced',
+                communityRating: 8.5,
+                description: 'Balanced champion for general purpose coding. Good when SWE-1.5 struggles. Use 15% of the time.'
+            },
+            'claude-3.7-thinking': {
+                name: 'Claude 3.7 Thinking',
+                provider: 'Anthropic',
+                cost: 1.5,
+                speed: 2,
+                quality: 9.5,
+                context: '200K',
+                bestFor: 'Architecture planning (PLANNING ONLY)',
+                avoid: 'Execution phase, simple tasks',
+                category: 'planning',
+                warning: '3x token usage - use sparingly!',
+                tokenMultiplier: 3,
+                communityRating: 8.0,
+                description: 'Use only for one-time architecture per project. One planning prompt = 6% of monthly budget.'
+            },
+            'claude-4-opus': {
+                name: 'Claude Opus 4.5',
+                provider: 'Anthropic',
+                cost: 2.0,
+                speed: 3,
+                quality: 10,
+                context: '200K',
+                bestFor: 'Maximum reasoning, most complex tasks',
+                avoid: 'Budget-conscious workflows',
+                category: 'premium',
+                promo: true,
+                promoNote: 'Limited time: Sonnet pricing for Opus!',
+                communityRating: 9.5,
+                description: 'Maximum reasoning capability. Available at Sonnet pricing for limited time.'
+            },
+            
+            // OPENAI MODELS
+            'gpt-5.2': {
+                name: 'GPT-5.2',
+                provider: 'OpenAI',
+                cost: 0.0,
+                speed: 7,
+                quality: 8.5,
+                context: '128K',
+                bestFor: 'State-of-the-art coding (FREE)',
+                avoid: 'Production critical work (promo may end)',
+                category: 'free',
+                promo: true,
+                promoNote: '0x credits temporarily for paid users!',
+                communityRating: 8.0,
+                description: 'State-of-the-art coding with 0x credits temporarily. Act fast before promo ends.'
+            },
+            'gpt-5.1-medium': {
+                name: 'GPT-5.1 (Medium Reasoning)',
+                provider: 'OpenAI',
+                cost: 2.5,
+                speed: 3,
+                quality: 8.5,
+                context: '128K',
+                bestFor: 'Project understanding, architecture scope',
+                avoid: 'Execution phase - gets stuck in loops',
+                category: 'premium',
+                warning: 'May get stuck in analysis loops',
+                communityRating: 7.0,
+                description: 'Better at project understanding but SLOW. Gets stuck in loops with Cascade.'
+            },
+            'gpt-5.1-low': {
+                name: 'GPT-5.1 (Low Reasoning)',
+                provider: 'OpenAI',
+                cost: 1.5,
+                speed: 6,
+                quality: 7.0,
+                context: '128K',
+                bestFor: 'Medium-complexity coding, scoped problems',
+                avoid: 'Trivial tasks',
+                category: 'balanced',
+                communityRating: 7.5,
+                description: 'Medium complexity coding with decent quality. Better than GPT-4, worse than Claude.'
+            },
+            'gpt-5.1-codex': {
+                name: 'GPT-5.1-Codex',
+                provider: 'OpenAI',
+                cost: 2.0,
+                speed: 2,
+                quality: 6.0,
+                context: '128K',
+                bestFor: 'AVOID - Infinite loops',
+                avoid: 'EVERYTHING - Community consensus',
+                category: 'avoid',
+                warning: 'AVOID ENTIRELY - Infinite analysis loops',
+                communityRating: 2.0,
+                description: 'AVOID ENTIRELY - Infinite analysis loops, never gets the job done.'
+            },
+            
+            // GOOGLE MODELS
+            'gemini-3-low': {
+                name: 'Gemini 3 Pro (Low)',
+                provider: 'Google',
+                cost: 1.0,
+                speed: 9,
+                quality: 6.5,
+                context: '100K',
+                bestFor: 'Quick tasks, status checks, simple questions',
+                avoid: 'Complex logic',
+                category: 'speed',
+                communityRating: 7.0,
+                description: 'Alternative when you need speed (9/10). Better than Grok, worse than Claude.'
+            },
+            'gemini-3-high': {
+                name: 'Gemini 3 Pro (High)',
+                provider: 'Google',
+                cost: 2.0,
+                speed: 5,
+                quality: 8.0,
+                context: '100K',
+                bestFor: 'Complex reasoning, edge case analysis',
+                avoid: 'Critical production work (less tested)',
+                category: 'balanced',
+                communityRating: 7.5,
+                description: 'Complex reasoning capability. Less tested than Claude/GPT.'
+            },
+            'gemini-3-flash': {
+                name: 'Gemini 3 Flash',
+                provider: 'Google',
+                cost: 0.5,
+                speed: 10,
+                quality: 6.0,
+                context: '100K',
+                bestFor: 'Ultra-fast simple tasks',
+                avoid: 'Complex reasoning',
+                category: 'speed',
+                communityRating: 6.5,
+                description: 'Ultra-fast for simple tasks. Use when speed is critical.'
+            },
+            
+            // FREE/EXPERIMENTAL
+            'grok-free': {
+                name: 'Grok-4 Code Fast',
+                provider: 'xAI',
+                cost: 0.0,
+                speed: 9,
+                quality: 5.0,
+                context: '128K',
+                bestFor: 'Free exploration, testing',
+                avoid: 'Production work, critical tasks',
+                category: 'free',
+                warning: 'Unreliable - loops frequently',
+                communityRating: 5.0,
+                description: 'FREE but unreliable. Loops doing nothing frequently. Use for free exploration only.'
+            }
+        };
+
+        const BYOK_MODELS = {
+            'claude-4-sonnet-byok': {
+                name: 'Claude 4 Sonnet',
+                provider: 'Anthropic (BYOK)',
+                cost: 2.0,
+                speed: 6,
+                quality: 9.0,
+                context: '200K',
+                bestFor: 'Balanced execution and reasoning',
+                category: 'premium',
+                apiCost: '$3/$15 per 1M tokens',
+                description: 'Latest Claude 4 with your own API key. Balanced performance.'
+            },
+            'claude-4-sonnet-thinking-byok': {
+                name: 'Claude 4 Sonnet (Thinking)',
+                provider: 'Anthropic (BYOK)',
+                cost: 3.0,
+                speed: 2,
+                quality: 9.5,
+                context: '200K',
+                bestFor: 'Deep architectural planning',
+                category: 'planning',
+                apiCost: '$3/$15 per 1M tokens',
+                warning: '3x token multiplier',
+                description: 'Claude 4 with thinking mode for deep planning.'
+            },
+            'claude-4-opus-byok': {
+                name: 'Claude 4 Opus',
+                provider: 'Anthropic (BYOK)',
+                cost: 4.0,
+                speed: 3,
+                quality: 10,
+                context: '200K',
+                bestFor: 'Maximum reasoning, complex analysis',
+                category: 'premium',
+                apiCost: '$15/$75 per 1M tokens',
+                description: 'Maximum reasoning capability with your own API key.'
+            },
+            'claude-4-opus-thinking-byok': {
+                name: 'Claude 4 Opus (Thinking)',
+                provider: 'Anthropic (BYOK)',
+                cost: 6.0,
+                speed: 2,
+                quality: 10,
+                context: '200K',
+                bestFor: 'Most complex architectural decisions',
+                category: 'planning',
+                apiCost: '$15/$75 per 1M tokens',
+                warning: '3x token multiplier',
+                description: 'Maximum reasoning with thinking mode.'
+            },
+            'gpt-4o-byok': {
+                name: 'GPT-4o',
+                provider: 'OpenAI (BYOK)',
+                cost: 1.5,
+                speed: 8,
+                quality: 8.5,
+                context: '128K',
+                bestFor: 'Fast execution with good quality',
+                category: 'balanced',
+                apiCost: '$2.50/$10 per 1M tokens',
+                description: 'Fast and reliable with your own OpenAI API key.'
+            },
+            'gemini-2-pro-byok': {
+                name: 'Gemini 2.0 Pro',
+                provider: 'Google (BYOK)',
+                cost: 2.0,
+                speed: 8,
+                quality: 9.0,
+                context: '1M+',
+                bestFor: 'Large context, long documents',
+                category: 'advanced',
+                apiCost: 'Variable pricing',
+                description: 'Large context window for massive documents.'
+            }
+        };
+
+        // ========================================
+        // PRESETS SYSTEM (9 Total)
+        // ========================================
+        
+        const PRESETS = {
+            backend: {
+                name: 'Backend Development',
+                icon: '⚙️',
+                description: 'API, database, server-side logic',
+                defaultModel: 'swe-1.5',
+                trianglePos: { quality: 0.7, speed: 0.8, balanced: 0.6 }
+            },
+            frontend: {
+                name: 'Frontend Development',
+                icon: '🎨',
+                description: 'UI components, styling, React/Vue',
+                defaultModel: 'swe-1.5',
+                trianglePos: { quality: 0.6, speed: 0.9, balanced: 0.7 }
+            },
+            planning: {
+                name: 'Architecture Planning',
+                icon: '🧠',
+                description: 'System design, complex planning',
+                defaultModel: 'claude-3.7-thinking',
+                trianglePos: { quality: 0.95, speed: 0.2, balanced: 0.4 }
+            },
+            debugging: {
+                name: 'Debugging',
+                icon: '🐛',
+                description: 'Complex bugs, legacy code',
+                defaultModel: 'claude-4.5',
+                trianglePos: { quality: 0.9, speed: 0.5, balanced: 0.6 }
+            },
+            quickFixes: {
+                name: 'Quick Fixes',
+                icon: '⚡',
+                description: 'Simple edits, trivial tasks',
+                defaultModel: 'swe-1.5-mini',
+                trianglePos: { quality: 0.4, speed: 0.95, balanced: 0.8 }
+            },
+            legacyRefactor: {
+                name: 'Legacy Code Refactor',
+                icon: '🏚️',
+                description: 'Old codebase modernization',
+                defaultModel: 'claude-4.5',
+                trianglePos: { quality: 0.95, speed: 0.3, balanced: 0.5 }
+            },
+            productionHotfix: {
+                name: 'Production Hotfix',
+                icon: '🚨',
+                description: 'Critical production issues',
+                defaultModel: 'claude-4.5',
+                budgetOverride: true,
+                trianglePos: { quality: 1.0, speed: 0.6, balanced: 0.6 }
+            },
+            learning: {
+                name: 'Learning/Exploration',
+                icon: '📚',
+                description: 'Experimenting, learning',
+                defaultModel: 'grok-free',
+                trianglePos: { quality: 0.3, speed: 0.8, balanced: 0.7 }
+            },
+            testGeneration: {
+                name: 'Test Generation',
+                icon: '🧪',
+                description: 'Unit tests, integration tests',
+                defaultModel: 'claude-3.7',
+                trianglePos: { quality: 0.75, speed: 0.7, balanced: 0.8 }
+            }
+        };
+
+        // ========================================
+        // GLOBAL STATE MANAGEMENT
+        // ========================================
+        
+        const STATE = {
+            currentTab: 'windsurf',
+            autoModeEnabled: {
+                windsurf: true,
+                byok: true
+            },
+            triangleState: {
+                windsurf: {
+                    x: 200,
+                    y: 175,
+                    isDragging: false,
+                    touchId: null,
+                    history: [{ x: 200, y: 175 }],
+                    historyIndex: 0
+                },
+                byok: {
+                    x: 200,
+                    y: 175,
+                    isDragging: false,
+                    touchId: null,
+                    history: [{ x: 200, y: 175 }],
+                    historyIndex: 0
+                }
+            },
+            activePreset: null,
+            lastAnalysis: null,
+            lastRecommendations: null
+        };
+
+        // ========================================
+        // BUDGET TRACKER CLASS
+        // ========================================
+        
+        class BudgetTracker {
+            constructor() {
+                this.data = this.load();
+                this.init();
+            }
+            
+            load() {
+                try {
+                    const saved = localStorage.getItem('windsurf_budget');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        // Check if month changed
+                        if (this.isNewMonth(data.lastReset)) {
+                            return this.reset();
+                        }
+                        return data;
+                    }
+                } catch (error) {
+                    console.warn('Failed to load budget data:', error);
+                    showToast('Budget data corrupted, resetting...', 'warning');
+                }
+                return this.reset();
+            }
+            
+            reset() {
+                return {
+                    monthlyLimit: 500,
+                    creditsUsed: 0,
+                    lastReset: new Date().toISOString(),
+                    history: [],
+                    breakdown: {
+                        debugging: 0,
+                        planning: 0,
+                        backend: 0,
+                        frontend: 0,
+                        testing: 0,
+                        refactoring: 0,
+                        general: 0
+                    }
+                };
+            }
+            
+            isNewMonth(lastResetStr) {
+                const lastReset = new Date(lastResetStr);
+                const now = new Date();
+                return lastReset.getMonth() !== now.getMonth() || 
+                       lastReset.getFullYear() !== now.getFullYear();
+            }
+            
+            addUsage(credits, taskType) {
+                this.data.creditsUsed += credits;
+                this.data.breakdown[taskType] = (this.data.breakdown[taskType] || 0) + credits;
+                
+                // Add to history
+                const today = new Date().toISOString().split('T')[0];
+                const existing = this.data.history.find(h => h.date === today);
+                if (existing) {
+                    existing.credits += credits;
+                } else {
+                    this.data.history.push({ date: today, credits });
+                }
+                
+                // Keep only last 7 days
+                this.data.history = this.data.history.slice(-7);
+                
+                this.save();
+                this.updateUI();
+                this.checkAlerts();
+            }
+            
+            checkAlerts() {
+                const percent = (this.data.creditsUsed / this.data.monthlyLimit) * 100;
+                const alertEl = document.getElementById('budget-alert');
+                
+                if (percent >= 90) {
+                    alertEl.classList.remove('hidden');
+                    alertEl.classList.add('critical');
+                    alertEl.querySelector('.budget-alert-title').textContent = '🚨 Critical Budget Alert';
+                    alertEl.querySelector('.budget-alert-text').textContent = `You've used ${Math.round(percent)}% of your monthly budget!`;
+                } else if (percent >= 75) {
+                    alertEl.classList.remove('hidden', 'critical');
+                    alertEl.querySelector('.budget-alert-title').textContent = '⚠️ Budget Alert';
+                    alertEl.querySelector('.budget-alert-text').textContent = `You've used ${Math.round(percent)}% of your monthly budget`;
+                } else {
+                    alertEl.classList.add('hidden');
+                }
+            }
+            
+            updateUI() {
+                const percent = Math.min(100, (this.data.creditsUsed / this.data.monthlyLimit) * 100);
+                const circumference = 2 * Math.PI * 70;
+                const offset = circumference - (percent / 100) * circumference;
+                
+                const fillEl = document.getElementById('budget-circle-fill');
+                fillEl.style.strokeDashoffset = offset;
+                
+                // Update color based on percentage
+                fillEl.classList.remove('warning', 'critical');
+                if (percent >= 90) {
+                    fillEl.classList.add('critical');
+                } else if (percent >= 75) {
+                    fillEl.classList.add('warning');
+                }
+                
+                // Update text values
+                document.getElementById('budget-percent').textContent = `${Math.round(percent)}%`;
+                document.getElementById('budget-used').textContent = this.data.creditsUsed.toFixed(1);
+                document.getElementById('budget-remaining').textContent = Math.max(0, this.data.monthlyLimit - this.data.creditsUsed).toFixed(1);
+                document.getElementById('budget-limit').textContent = this.data.monthlyLimit;
+            }
+            
+            save() {
+                try {
+                    localStorage.setItem('windsurf_budget', JSON.stringify(this.data));
+                } catch (error) {
+                    console.error('Failed to save budget data:', error);
+                    if (error.name === 'QuotaExceededError') {
+                        showToast('Storage quota exceeded. Please clear some data.', 'error');
+                    } else {
+                        showToast('Failed to save budget data', 'error');
+                    }
+                }
+            }
+            
+            init() {
+                this.updateUI();
+            }
+            
+            reset() {
+                if (confirm('Are you sure you want to reset your budget tracker? This will clear all usage data.')) {
+                    this.data = this.reset();
+                    this.save();
+                    this.updateUI();
+                }
+            }
+        }
+
+        // ========================================
+        // TRIANGLE SELECTOR CLASS (FIXED)
+        // ========================================
+        
+        class TriangleSelector {
+            constructor(canvasId, tab) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.tab = tab;
+                this.state = STATE.triangleState[tab];
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.draw();
+            }
+            
+            bindEvents() {
+                // Mouse events
+                this.canvas.addEventListener('mousedown', this.handleStart.bind(this));
+                this.canvas.addEventListener('mousemove', this.handleMove.bind(this));
+                this.canvas.addEventListener('mouseup', this.handleEnd.bind(this));
+                
+                // Touch events - CRITICAL FIX
+                this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { 
+                    passive: false  // MUST BE FALSE to prevent scroll
+                });
+                this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { 
+                    passive: false  // MUST BE FALSE
+                });
+                this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                
+                // Keyboard navigation
+                this.canvas.addEventListener('keydown', this.handleKeyDown.bind(this));
+                
+                // Double-tap to reset
+                this.lastTap = 0;
+                
+                // Make canvas focusable
+                this.canvas.setAttribute('tabindex', '0');
+            }
+            
+            handleStart(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Check if clicking near the dot
+                const dist = Math.sqrt((x - this.state.x) ** 2 + (y - this.state.y) ** 2);
+                if (dist < 30) {
+                    this.state.isDragging = true;
+                    this.vibrate(10);
+                }
+            }
+            
+            handleMove(e) {
+                if (!this.state.isDragging) return;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                this.updatePosition(x, y);
+            }
+            
+            handleEnd() {
+                if (this.state.isDragging) {
+                    this.vibrate(10);
+                    this.saveToHistory();
+                }
+                this.state.isDragging = false;
+            }
+            
+            handleTouchStart(e) {
+                e.preventDefault();  // Prevent scrolling
+                
+                const touch = e.touches[0];
+                this.state.touchId = touch.identifier;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                // Check for double-tap
+                const now = Date.now();
+                if (now - this.lastTap < 300) {
+                    this.resetToCenter();
+                    this.vibrate(50);
+                    return;
+                }
+                this.lastTap = now;
+                
+                // Check if touching the dot
+                const dist = Math.sqrt((x - this.state.x) ** 2 + (y - this.state.y) ** 2);
+                if (dist < 30) {
+                    this.state.isDragging = true;
+                    this.vibrate(10);
+                }
+            }
+            
+            handleTouchMove(e) {
+                e.preventDefault();  // Prevent scrolling
+                
+                if (!this.state.isDragging) return;
+                
+                const touch = Array.from(e.touches).find(t => t.identifier === this.state.touchId);
+                if (!touch) return;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                this.updatePosition(x, y);
+            }
+            
+            handleTouchEnd(e) {
+                if (this.state.isDragging) {
+                    this.vibrate(10);
+                    this.saveToHistory();
+                }
+                this.state.isDragging = false;
+                this.state.touchId = null;
+            }
+            
+            handleKeyDown(e) {
+                const step = e.shiftKey ? 10 : 5;
+                let moved = false;
+                
+                switch(e.key) {
+                    case 'ArrowUp':
+                        this.state.y = Math.max(30, this.state.y - step);
+                        moved = true;
+                        break;
+                    case 'ArrowDown':
+                        this.state.y = Math.min(this.canvas.height - 30, this.state.y + step);
+                        moved = true;
+                        break;
+                    case 'ArrowLeft':
+                        this.state.x = Math.max(30, this.state.x - step);
+                        moved = true;
+                        break;
+                    case 'ArrowRight':
+                        this.state.x = Math.min(this.canvas.width - 30, this.state.x + step);
+                        moved = true;
+                        break;
+                    case 'Enter':
+                        this.saveToHistory();
+                        break;
+                    case 'z':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            this.undo();
+                        }
+                        break;
+                    case 'y':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            this.redo();
+                        }
+                        break;
+                }
+                
+                if (moved) {
+                    e.preventDefault();
+                    this.constrainToTriangle();
+                    this.draw();
+                }
+            }
+            
+            updatePosition(x, y) {
+                this.state.x = x;
+                this.state.y = y;
+                this.constrainToTriangle();
+                this.draw();
+            }
+            
+            constrainToTriangle() {
+                const w = this.canvas.width;
+                const h = this.canvas.height;
+                
+                // Simple boundary checking
+                if (this.state.x < 30) this.state.x = 30;
+                if (this.state.x > w - 30) this.state.x = w - 30;
+                if (this.state.y < 30) this.state.y = 30;
+                if (this.state.y > h - 30) this.state.y = h - 30;
+            }
+            
+            draw() {
+                const w = this.canvas.width;
+                const h = this.canvas.height;
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, w, h);
+                
+                // Triangle vertices
+                const top = { x: w / 2, y: 30 };
+                const left = { x: 30, y: h - 30 };
+                const right = { x: w - 30, y: h - 30 };
+                
+                // Draw gradient background
+                const gradient = this.ctx.createLinearGradient(left.x, left.y, top.x, top.y);
+                gradient.addColorStop(0, 'rgba(239, 68, 68, 0.05)');
+                gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.05)');
+                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.moveTo(top.x, top.y);
+                this.ctx.lineTo(left.x, left.y);
+                this.ctx.lineTo(right.x, right.y);
+                this.ctx.closePath();
+                this.ctx.fill();
+                
+                // Draw triangle border
+                this.ctx.strokeStyle = '#3b82f6';
+                this.ctx.lineWidth = 3;
+                this.ctx.stroke();
+                
+                // Draw vertices
+                this.drawVertex(top, '#ef4444', 'Quality');
+                this.drawVertex(left, '#10b981', 'Speed/Cost');
+                this.drawVertex(right, '#3b82f6', 'Balanced');
+                
+                // Draw current position dot
+                this.ctx.fillStyle = '#3b82f6';
+                this.ctx.beginPath();
+                this.ctx.arc(this.state.x, this.state.y, 12, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Draw dot border
+                this.ctx.strokeStyle = '#ffffff';
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                
+                // Draw grid lines
+                this.ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+                this.ctx.lineWidth = 1;
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.state.x, 0);
+                this.ctx.lineTo(this.state.x, h);
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, this.state.y);
+                this.ctx.lineTo(w, this.state.y);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+            
+            drawVertex(pos, color, label) {
+                this.ctx.fillStyle = color;
+                this.ctx.beginPath();
+                this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Label
+                this.ctx.fillStyle = color;
+                this.ctx.font = 'bold 12px sans-serif';
+                this.ctx.textAlign = 'center';
+                if (label === 'Quality') {
+                    this.ctx.fillText(label, pos.x, pos.y - 20);
+                } else if (label === 'Speed/Cost') {
+                    this.ctx.fillText(label, pos.x - 40, pos.y + 20);
+                } else {
+                    this.ctx.fillText(label, pos.x + 40, pos.y + 20);
+                }
+            }
+            
+            vibrate(duration) {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(duration);
+                }
+            }
+            
+            saveToHistory() {
+                // Keep last 5 positions
+                this.state.history = this.state.history.slice(0, this.state.historyIndex + 1);
+                this.state.history.push({ x: this.state.x, y: this.state.y });
+                if (this.state.history.length > 5) {
+                    this.state.history.shift();
+                } else {
+                    this.state.historyIndex++;
+                }
+            }
+            
+            undo() {
+                if (this.state.historyIndex > 0) {
+                    this.state.historyIndex--;
+                    const pos = this.state.history[this.state.historyIndex];
+                    this.state.x = pos.x;
+                    this.state.y = pos.y;
+                    this.draw();
+                    this.vibrate(10);
+                }
+            }
+            
+            redo() {
+                if (this.state.historyIndex < this.state.history.length - 1) {
+                    this.state.historyIndex++;
+                    const pos = this.state.history[this.state.historyIndex];
+                    this.state.x = pos.x;
+                    this.state.y = pos.y;
+                    this.draw();
+                    this.vibrate(10);
+                }
+            }
+            
+            resetToCenter() {
+                this.state.x = this.canvas.width / 2;
+                this.state.y = this.canvas.height / 2;
+                this.saveToHistory();
+                this.draw();
+            }
+        }
+
+        // ========================================
+        // ANALYSIS ENGINE
+        // ========================================
+        
+        function analyzeTask(input) {
+            const lower = input.toLowerCase();
+            
+            return {
+                complexity: calculateComplexity(lower),
+                speed: detectSpeed(lower),
+                needsPlanning: detectPlanning(lower),
+                isDebugging: detectDebugging(lower),
+                isFrontend: detectFrontend(lower),
+                isBackend: detectBackend(lower),
+                needsContext: detectContextNeed(lower),
+                budget: detectBudgetConstraint(lower),
+                urgency: detectUrgency(lower),
+                contextSize: estimateContextSize(input),
+                taskType: detectTaskType(lower)
+            };
+        }
+        
+        function calculateComplexity(text) {
+            let score = 3; // baseline
+            
+            if (text.includes('complex') || text.includes('complicated')) score += 2;
+            if (text.includes('debug') || text.includes('fix')) score += 1;
+            if (text.includes('refactor')) score += 1;
+            if (text.includes('architecture') || text.includes('design')) score += 2;
+            if (text.includes('edge case') || text.includes('corner case')) score += 1;
+            if (text.includes('large') || text.includes('50k') || text.includes('100k')) score += 2;
+            if (text.includes('simple') || text.includes('trivial') || text.includes('quick')) score = 2;
+            if (text.includes('snippet') || text.includes('small')) score = 2;
+            
+            return Math.min(10, Math.max(1, score));
+        }
+        
+        function detectSpeed(text) {
+            if (text.includes('urgent') || text.includes('asap') || text.includes('now')) return 'critical';
+            if (text.includes('quick') || text.includes('fast')) return 'fast';
+            if (text.includes('slow') || text.includes('plan')) return 'slow';
+            return 'normal';
+        }
+        
+        function detectPlanning(text) {
+            return text.includes('plan') || text.includes('architecture') || text.includes('design') || 
+                   text.includes('scope') || text.includes('understand');
+        }
+        
+        function detectDebugging(text) {
+            return text.includes('debug') || text.includes('fix') || text.includes('error') || 
+                   text.includes('issue') || text.includes('bug');
+        }
+        
+        function detectFrontend(text) {
+            return text.includes('react') || text.includes('vue') || text.includes('component') || 
+                   text.includes('ui') || text.includes('frontend') || text.includes('html') || 
+                   text.includes('css') || text.includes('javascript');
+        }
+        
+        function detectBackend(text) {
+            return text.includes('backend') || text.includes('api') || text.includes('database') || 
+                   text.includes('server') || text.includes('python') || text.includes('node');
+        }
+        
+        function detectContextNeed(text) {
+            return text.includes('large') || text.includes('codebase') || text.includes('project') || 
+                   text.includes('full') || text.includes('entire');
+        }
+        
+        function detectBudgetConstraint(text) {
+            if (/cheap|free|budget|save|low.?cost/i.test(text)) return 'low';
+            if (/premium|best|quality|expensive/i.test(text)) return 'high';
+            return 'normal';
+        }
+        
+        function detectUrgency(text) {
+            if (/urgent|asap|now|emergency|critical/i.test(text)) return 10;
+            if (/quick|fast|soon/i.test(text)) return 7;
+            if (/no.?rush|whenever|eventually/i.test(text)) return 3;
+            return 5;
+        }
+        
+        function estimateContextSize(text) {
+            // Count @mentions
+            const mentions = (text.match(/@\w+/g) || []).length;
+            
+            // Count code blocks
+            const codeBlocks = (text.match(/```/g) || []).length / 2;
+            
+            // Estimate tokens (rough: 1 word ≈ 1.3 tokens)
+            const wordCount = text.split(/\s+/).length;
+            const estimatedTokens = wordCount * 1.3;
+            
+            return {
+                mentions,
+                codeBlocks,
+                estimatedTokens,
+                needsLargeContext: mentions > 5 || codeBlocks > 3 || estimatedTokens > 1000
+            };
+        }
+        
+        function detectTaskType(text) {
+            if (/debug|fix|error|bug/i.test(text)) return 'debugging';
+            if (/plan|design|architect/i.test(text)) return 'planning';
+            if (/backend|api|server|database/i.test(text)) return 'backend';
+            if (/frontend|ui|component|react/i.test(text)) return 'frontend';
+            if (/test|spec|unit/i.test(text)) return 'testing';
+            if (/refactor|clean|improve/i.test(text)) return 'refactoring';
+            return 'general';
+        }
+        
+        function rankWindsurfModels(analysis) {
+            const scored = Object.entries(WINDSURF_MODELS)
+                .filter(([_, model]) => !model.hidden)
+                .map(([key, model]) => {
+                    let score = 50; // baseline
+                    
+                    // Complexity matching
+                    if (analysis.complexity <= 3 && model.quality >= 6) score += 10;
+                    if (analysis.complexity >= 7 && model.quality >= 8) score += 15;
+                    if (analysis.complexity >= 7 && model.quality <= 6) score -= 10;
+                    
+                    // Speed matching
+                    if (analysis.speed === 'critical' && model.speed >= 8) score += 20;
+                    if (analysis.speed === 'fast' && model.speed >= 7) score += 10;
+                    if (analysis.speed === 'slow' && model.speed <= 5) score += 5;
+                    
+                    // Planning needs
+                    if (analysis.needsPlanning && model.category === 'planning') score += 25;
+                    if (analysis.needsPlanning && model.category === 'workhorse') score -= 15;
+                    
+                    // Debugging
+                    if (analysis.isDebugging && model.quality >= 8) score += 15;
+                    
+                    // Context needs
+                    if (analysis.contextSize.needsLargeContext && model.context === '1M') score += 10;
+                    if (analysis.contextSize.needsLargeContext && model.context === '16K') score -= 5;
+                    
+                    // Budget constraints
+                    if (analysis.budget === 'low' && model.cost <= 0.5) score += 15;
+                    if (analysis.budget === 'high' && model.quality >= 8) score += 10;
+                    
+                    // Task type matching
+                    if (analysis.taskType === 'debugging' && model.quality >= 8) score += 10;
+                    if (analysis.taskType === 'planning' && model.category === 'planning') score += 20;
+                    if (analysis.taskType === 'frontend' && model.speed >= 7) score += 5;
+                    if (analysis.taskType === 'backend' && model.speed >= 7) score += 5;
+                    
+                    // Community rating bonus
+                    score += model.communityRating || 0;
+                    
+                    // Avoid penalty
+                    if (model.category === 'avoid') score -= 50;
+                    
+                    return { key, ...model, score };
+                })
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 3);
+            
+            return scored;
+        }
+        
+        function rankByokModels(analysis) {
+            const scored = Object.entries(BYOK_MODELS)
+                .map(([key, model]) => {
+                    let score = 50; // baseline
+                    
+                    // Similar scoring logic for BYOK models
+                    if (analysis.complexity >= 7 && model.quality >= 8) score += 15;
+                    if (analysis.speed === 'critical' && model.speed >= 8) score += 20;
+                    if (analysis.needsPlanning && model.category === 'planning') score += 25;
+                    if (analysis.isDebugging && model.quality >= 8) score += 15;
+                    
+                    return { key, ...model, score };
+                })
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 3);
+            
+            return scored;
+        }
+        
+        // ========================================
+        // UI FUNCTIONS
+        // ========================================
+        
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.getElementById(`${tab}-tab-btn`).classList.add('active');
+            document.getElementById(`${tab}-tab-btn`).setAttribute('aria-selected', 'true');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tab}-tab`).classList.add('active');
+            
+            STATE.currentTab = tab;
+        }
+        
+        function toggleAutoMode(tab) {
+            const checkbox = document.getElementById(`auto-mode-${tab}`);
+            STATE.autoModeEnabled[tab] = checkbox.checked;
+            
+            const manualControl = document.getElementById(`manual-control-${tab}`);
+            if (checkbox.checked) {
+                manualControl.classList.add('hidden');
+            } else {
+                manualControl.classList.remove('hidden');
+            }
+        }
+        
+        function analyzeWindsurf() {
+            const input = document.getElementById('windsurf-input').value.trim();
+            if (!input) {
+                showToast('Please describe your task', 'warning');
+                return;
+            }
+            
+            const analysis = analyzeTask(input);
+            const recommendations = rankWindsurfModels(analysis);
+            
+            STATE.lastAnalysis = analysis;
+            STATE.lastRecommendations = recommendations;
+            
+            displayResults('windsurf', recommendations, analysis);
+            
+            // Update budget tracker
+            if (recommendations.length > 0) {
+                budgetTracker.addUsage(recommendations[0].cost, analysis.taskType);
+            }
+        }
+        
+        function analyzeByok() {
+            const input = document.getElementById('byok-input').value.trim();
+            if (!input) {
+                showToast('Please describe your task', 'warning');
+                return;
+            }
+            
+            const analysis = analyzeTask(input);
+            const recommendations = rankByokModels(analysis);
+            
+            displayResults('byok', recommendations, analysis);
+        }
+        
+        function displayResults(tab, recommendations, analysis) {
+            const resultsEl = document.getElementById(`${tab}-results`);
+            resultsEl.classList.remove('hidden');
+            
+            // Analysis breakdown
+            const breakdownHTML = `
+                <div class="analysis-breakdown">
+                    <h3>📊 Analysis Breakdown</h3>
+                    <div class="analysis-grid">
+                        <div class="analysis-item">
+                            <div class="analysis-value">${analysis.complexity}/10</div>
+                            <div class="analysis-label">Complexity</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-value">${analysis.speed}</div>
+                            <div class="analysis-label">Speed Need</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-value">${analysis.urgency}/10</div>
+                            <div class="analysis-label">Urgency</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-value">${analysis.taskType}</div>
+                            <div class="analysis-label">Task Type</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Model recommendations
+            const recommendationsHTML = `
+                <h3>🎯 Model Recommendations</h3>
+                <div class="model-recommendations">
+                    ${recommendations.map((model, index) => createModelCard(model, index + 1)).join('')}
+                </div>
+            `;
+            
+            resultsEl.innerHTML = breakdownHTML + recommendationsHTML;
+        }
+        
+        function createModelCard(model, rank) {
+            const tags = [];
+            if (model.promo) tags.push('<span class="tag tag-promo">PROMO</span>');
+            tags.push(`<span class="tag tag-${model.category}">${model.category.toUpperCase()}</span>`);
+            
+            const warning = model.warning ? `
+                <div class="model-warning">
+                    <div class="model-warning-title">⚠️ Warning</div>
+                    <div class="model-warning-text">${model.warning}</div>
+                </div>
+            ` : '';
+            
+            return `
+                <div class="model-card rank-${rank}">
+                    <div class="model-header">
+                        <div class="model-info">
+                            <div class="model-name">${model.name}</div>
+                            <div class="model-provider">${model.provider}</div>
+                        </div>
+                        <div class="model-rank rank-${rank}">#${rank}</div>
+                    </div>
+                    
+                    <div class="model-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Cost</div>
+                            <div class="metric-value">${model.cost === 0 ? 'FREE' : model.cost + 'cr'}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Speed</div>
+                            <div class="metric-value">${model.speed}/10</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Quality</div>
+                            <div class="metric-value">${model.quality}/10</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Context</div>
+                            <div class="metric-value">${model.context}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="model-tags">
+                        ${tags.join('')}
+                    </div>
+                    
+                    <div class="model-description">
+                        <h4>Why this model?</h4>
+                        <p>${model.description}</p>
+                    </div>
+                    
+                    ${warning}
+                </div>
+            `;
+        }
+        
+        function resetTriangle(tab) {
+            const canvas = document.getElementById(`triangle-canvas-${tab}`);
+            const selector = triangleSelectors[tab];
+            if (selector) {
+                selector.resetToCenter();
+            }
+        }
+        
+        function exportResults() {
+            if (!STATE.lastRecommendations) {
+                showToast('No results to export', 'warning');
+                return;
+            }
+            
+            const markdown = generateMarkdownExport();
+            navigator.clipboard.writeText(markdown).then(() => {
+                showToast('Results copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+        
+        function generateMarkdownExport() {
+            const analysis = STATE.lastAnalysis;
+            const recommendations = STATE.lastRecommendations;
+            
+            let markdown = `# Windsurf Model Selection Results\n\n`;
+            markdown += `## Task Analysis\n`;
+            markdown += `- **Complexity**: ${analysis.complexity}/10\n`;
+            markdown += `- **Speed Need**: ${analysis.speed}\n`;
+            markdown += `- **Task Type**: ${analysis.taskType}\n`;
+            markdown += `- **Urgency**: ${analysis.urgency}/10\n\n`;
+            
+            markdown += `## Model Recommendations\n\n`;
+            recommendations.forEach((model, index) => {
+                markdown += `### ${index + 1}. ${model.name}\n`;
+                markdown += `- **Provider**: ${model.provider}\n`;
+                markdown += `- **Cost**: ${model.cost === 0 ? 'FREE' : model.cost + ' credits'}\n`;
+                markdown += `- **Speed**: ${model.speed}/10\n`;
+                markdown += `- **Quality**: ${model.quality}/10\n`;
+                markdown += `- **Context**: ${model.context}\n`;
+                markdown += `- **Best For**: ${model.bestFor}\n\n`;
+            });
+            
+            return markdown;
+        }
+        
+        function resetBudget() {
+            budgetTracker.reset();
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                <div class="toast-content">
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            
+            const container = document.getElementById('toast-container');
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        function initializePresets() {
+            const windsurfPresetsEl = document.getElementById('presets-windsurf');
+            const byokPresetsEl = document.getElementById('presets-byok');
+            
+            Object.entries(PRESETS).forEach(([key, preset]) => {
+                // Windsurf presets
+                const windsurfBtn = document.createElement('button');
+                windsurfBtn.className = 'preset-btn';
+                windsurfBtn.innerHTML = `
+                    <div class="preset-icon">${preset.icon}</div>
+                    <div class="preset-name">${preset.name}</div>
+                    <div class="preset-desc">${preset.description}</div>
+                `;
+                windsurfBtn.onclick = () => applyPreset('windsurf', key);
+                windsurfPresetsEl.appendChild(windsurfBtn);
+                
+                // BYOK presets (subset)
+                if (['backend', 'frontend', 'planning', 'debugging'].includes(key)) {
+                    const byokBtn = document.createElement('button');
+                    byokBtn.className = 'preset-btn';
+                    byokBtn.innerHTML = `
+                        <div class="preset-icon">${preset.icon}</div>
+                        <div class="preset-name">${preset.name}</div>
+                        <div class="preset-desc">${preset.description}</div>
+                    `;
+                    byokBtn.onclick = () => applyPreset('byok', key);
+                    byokPresetsEl.appendChild(byokBtn);
+                }
+            });
+        }
+        
+        function applyPreset(tab, presetKey) {
+            const preset = PRESETS[presetKey];
+            
+            // Update active preset
+            document.querySelectorAll(`#${tab}-tab .preset-btn`).forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.preset-btn').classList.add('active');
+            
+            // Update triangle position if in manual mode
+            if (!STATE.autoModeEnabled[tab]) {
+                const selector = triangleSelectors[tab];
+                if (selector) {
+                    const canvas = selector.canvas;
+                    const pos = preset.trianglePos;
+                    selector.state.x = canvas.width * pos.quality;
+                    selector.state.y = canvas.height * (1 - pos.speed);
+                    selector.draw();
+                }
+            }
+            
+            // Set input placeholder
+            const input = document.getElementById(`${tab}-input`);
+            const examples = {
+                backend: 'Create REST API with authentication and database integration',
+                frontend: 'Build responsive React component with state management',
+                planning: 'Design microservices architecture for e-commerce platform',
+                debugging: 'Fix authentication bug that prevents user login',
+                quickFixes: 'Update button text and fix minor styling issue',
+                legacyRefactor: 'Modernize legacy codebase with current best practices',
+                productionHotfix: 'Critical production bug causing system downtime',
+                learning: 'Experiment with new framework and build sample project',
+                testGeneration: 'Write comprehensive unit tests for existing code'
+            };
+            
+            if (examples[presetKey]) {
+                input.placeholder = `Example: ${examples[presetKey]}`;
+            }
+            
+            showToast(`Applied ${preset.name} preset`, 'success');
+        }
+        
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        let budgetTracker;
+        let triangleSelectors = {};
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize budget tracker
+            budgetTracker = new BudgetTracker();
+            
+            // Initialize triangle selectors
+            triangleSelectors.windsurf = new TriangleSelector('triangle-canvas-windsurf', 'windsurf');
+            triangleSelectors.byok = new TriangleSelector('triangle-canvas-byok', 'byok');
+            
+            // Initialize presets
+            initializePresets();
+            
+            // Set initial auto mode states
+            STATE.autoModeEnabled.windsurf = document.getElementById('auto-mode-windsurf').checked;
+            STATE.autoModeEnabled.byok = document.getElementById('auto-mode-byok').checked;
+            
+            // Load saved preferences
+            loadPreferences();
+            
+            console.log('Windsurf Model Selector v3.0 initialized');
+        });
+        
+        function loadPreferences() {
+            try {
+                const saved = localStorage.getItem('windsurf_preferences');
+                if (saved) {
+                    const prefs = JSON.parse(saved);
+                    
+                    // Restore tab
+                    if (prefs.defaultTab) {
+                        switchTab(prefs.defaultTab);
+                    }
+                    
+                    // Restore auto mode states
+                    if (prefs.autoMode) {
+                        STATE.autoModeEnabled = prefs.autoMode;
+                        document.getElementById('auto-mode-windsurf').checked = prefs.autoMode.windsurf;
+                        document.getElementById('auto-mode-byok').checked = prefs.autoMode.byok;
+                        
+                        // Show/hide manual controls
+                        document.getElementById('manual-control-windsurf').classList.toggle('hidden', prefs.autoMode.windsurf);
+                        document.getElementById('manual-control-byok').classList.toggle('hidden', prefs.autoMode.byok);
+                    }
+                    
+                    // Restore triangle positions
+                    if (prefs.trianglePositions) {
+                        Object.entries(prefs.trianglePositions).forEach(([tab, pos]) => {
+                            if (triangleSelectors[tab]) {
+                                triangleSelectors[tab].state.x = pos.x;
+                                triangleSelectors[tab].state.y = pos.y;
+                                triangleSelectors[tab].draw();
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Failed to load preferences:', error);
+            }
+        }
+        
+        function savePreferences() {
+            try {
+                const prefs = {
+                    defaultTab: STATE.currentTab,
+                    autoMode: STATE.autoModeEnabled,
+                    trianglePositions: {
+                        windsurf: { x: triangleSelectors.windsurf.state.x, y: triangleSelectors.windsurf.state.y },
+                        byok: { x: triangleSelectors.byok.state.x, y: triangleSelectors.byok.state.y }
+                    }
+                };
+                
+                localStorage.setItem('windsurf_preferences', JSON.stringify(prefs));
+            } catch (error) {
+                console.error('Failed to save preferences:', error);
+                if (error.name === 'QuotaExceededError') {
+                    showToast('Storage quota exceeded. Please clear some data.', 'error');
+                }
+            }
+        }
+        
+        // Save preferences on changes
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-btn')) {
+                setTimeout(savePreferences, 100);
+            }
+        });
+        
+        document.addEventListener('change', (e) => {
+            if (e.target.id && e.target.id.startsWith('auto-mode-')) {
+                setTimeout(savePreferences, 100);
+            }
+        });
+        
+        // Save triangle position on mouse up
+        document.addEventListener('mouseup', () => {
+            setTimeout(savePreferences, 100);
+        });
+        
+        document.addEventListener('touchend', () => {
+            setTimeout(savePreferences, 100);
+        });
+    </script>
+</body>
+</html>
