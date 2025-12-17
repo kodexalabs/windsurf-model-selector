@@ -8,11 +8,11 @@
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Windsurf Model Selector v3.0">
-    <meta property="og:description" content="Smart model selection for Windsurf IDE - Analyze your task and get optimal model recommendations with cost tracking">
+    <meta property="og:description" content="Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
-    <title>Windsurf Model Selector v3.0 - Smart AI Model Selection</title>
+    <title>Windsurf Model Selector v4.0 - Smart Prompt Enhancement</title>
     
     <style>
         /* ========================================
@@ -1016,32 +1016,17 @@
             border-left: 4px solid var(--success);
         }
         
-        .toast.error {
-            border-left: 4px solid var(--error);
-        }
-        
         .toast.warning {
             border-left: 4px solid var(--warning);
         }
         
-        .toast.info {
-            border-left: 4px solid var(--info);
+        .toast.error {
+            border-left: 4px solid var(--error);
         }
         
         /* ========================================
            RESPONSIVE DESIGN
         ======================================== */
-        
-        @media (max-width: 1024px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            
-            .budget-tracker {
-                position: relative;
-                top: 0;
-            }
-        }
         
         @media (max-width: 768px) {
             body {
@@ -1095,8 +1080,7 @@
         <!-- Header -->
         <header role="banner">
             <h1>🧠 Windsurf Model Selector</h1>
-            <p class="subtitle">Smart AI model selection for Windsurf IDE - Analyze your task and get optimal recommendations</p>
-            <span class="version-badge">v3.0 - December 2025</span>
+            <p class="subtitle">Analyze your task, get optimal model recommendations, and enhance your prompts with AI</p>
         </header>
 
         <!-- Main Content -->
@@ -1105,9 +1089,6 @@
             <div class="tabs" role="tablist">
                 <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="windsurf-tab" id="windsurf-tab-btn" onclick="switchTab('windsurf')">
                     Windsurf <span class="badge">16 models</span>
-                </button>
-                <button class="tab-btn" role="tab" aria-selected="false" aria-controls="byok-tab" id="byok-tab-btn" onclick="switchTab('byok')">
-                    BYOK <span class="badge">6 models</span>
                 </button>
             </div>
 
@@ -1184,122 +1165,44 @@
                         </div>
                     </div>
 
-                    <!-- BYOK Tab -->
-                    <div id="byok-tab" class="tab-content" role="tabpanel" aria-labelledby="byok-tab-btn">
-                        <!-- Auto Mode Toggle -->
-                        <div class="auto-mode-section">
-                            <div class="auto-mode-info">
-                                <div class="auto-mode-title">🤖 Auto-Detect Mode</div>
-                                <div class="auto-mode-desc">Automatically analyze your task and recommend optimal models</div>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="auto-mode-byok" checked onchange="toggleAutoMode('byok')" aria-label="Toggle auto-detect mode">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <!-- Presets -->
-                        <div class="presets-section">
-                            <h3>Quick Presets</h3>
-                            <div class="presets-grid" id="presets-byok">
-                                <!-- Presets will be dynamically generated -->
-                            </div>
-                        </div>
-
-                        <!-- Manual Control (Triangle) -->
-                        <div id="manual-control-byok" class="manual-control hidden">
-                            <h3>Manual Preference Control</h3>
-                            <p class="input-hint">Drag the dot to set your preferences. Use arrow keys for precise control. Double-tap to reset.</p>
-                            <canvas id="triangle-canvas-byok" class="triangle-canvas" width="400" height="350" tabindex="0" role="img" aria-label="Triangle selector for model preferences"></canvas>
-                            <div class="triangle-legend">
-                                <div class="legend-item quality">
-                                    <strong>Quality</strong>
-                                    <span>Best results, slower</span>
-                                </div>
-                                <div class="legend-item speed">
-                                    <strong>Speed/Cost</strong>
-                                    <span>Fast, economical</span>
-                                </div>
-                                <div class="legend-item balanced">
-                                    <strong>Balanced</strong>
-                                    <span>Mix of both</span>
-                                </div>
-                            </div>
-                            <div class="triangle-controls">
-                                <button class="btn btn-secondary" onclick="resetTriangle('byok')">Reset to Center</button>
-                            </div>
-                        </div>
-
-                        <!-- Input Section -->
-                        <div class="input-section">
-                            <label for="byok-input" class="input-label">Describe Your Task</label>
-                            <textarea 
-                                id="byok-input" 
-                                placeholder="Example: 'Refactor authentication system with 10 files' or 'Quick fix in Header.jsx' or 'Plan microservices architecture'"
-                                aria-describedby="byok-input-hint"
-                            ></textarea>
-                            <p id="byok-input-hint" class="input-hint">
-                                💡 Tip: BYOK models use your own API keys. Check pricing on provider websites.
-                            </p>
-                        </div>
-
-                        <!-- Analyze Button -->
-                        <button class="btn btn-primary btn-full" onclick="analyzeByok()">
-                            <span>✨ Analyze & Get Recommendations</span>
-                        </button>
-
-                        <!-- Results -->
-                        <div id="byok-results" class="results-section hidden" role="region" aria-live="polite">
-                            <!-- Results will be dynamically generated -->
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Right Column: Budget Tracker -->
-                <aside class="budget-tracker" role="complementary" aria-label="Budget tracker">
-                    <div class="budget-header">
-                        <h3 class="budget-title">💰 Budget Tracker</h3>
+                <!-- Right Column: Prompt Enhancement Sidebar -->
+                <aside class="recommendations-sidebar" role="complementary">
+                    <div id="compact-recommendations" class="hidden">
+                        <h3 class="sidebar-title">🎯 Top 3 Models</h3>
+                        <div id="compact-cards"></div>
                     </div>
-
-                    <!-- Circular Progress -->
-                    <div class="budget-progress">
-                        <svg class="budget-circle" viewBox="0 0 160 160">
-                            <circle class="budget-circle-bg" cx="80" cy="80" r="70"></circle>
-                            <circle id="budget-circle-fill" class="budget-circle-fill" cx="80" cy="80" r="70" 
-                                    stroke-dasharray="440" stroke-dashoffset="440"></circle>
-                        </svg>
-                        <div class="budget-text">
-                            <div id="budget-percent" class="budget-percent">0%</div>
-                            <div class="budget-label">Used</div>
+                    <div id="prompt-enhancement" class="hidden">
+                        <h3 class="sidebar-title">✨ Prompt Enhancements</h3>
+                        <div class="prompt-comparison">
+                            <button class="accordion-toggle" onclick="togglePromptComparison()">
+                                <span>View Enhanced Prompt</span>
+                                <span class="toggle-icon">▼</span>
+                            </button>
+                            <div class="accordion-content hidden">
+                                <div class="prompt-diff">
+                                    <div class="original-prompt">
+                                        <h4>Original</h4>
+                                        <p id="original-text"></p>
+                                    </div>
+                                    <div class="enhanced-prompt">
+                                        <h4>Enhanced</h4>
+                                        <p id="enhanced-text"></p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="budget-stats">
-                        <div class="budget-stat">
-                            <span class="budget-stat-label">Credits Used</span>
-                            <span id="budget-used" class="budget-stat-value">0</span>
+                        <div class="identified-gaps">
+                            <h4>Identified Gaps</h4>
+                            <ul id="gaps-list"></ul>
                         </div>
-                        <div class="budget-stat">
-                            <span class="budget-stat-label">Remaining</span>
-                            <span id="budget-remaining" class="budget-stat-value">500</span>
+                        <div class="enhancement-actions">
+                            <button class="btn btn-primary btn-full" onclick="copyEnhancedPrompt()">📋 Copy Enhanced Prompt</button>
+                            <button class="btn btn-secondary btn-full" onclick="refineAgain()">🔄 Refine Again</button>
+                            <button class="btn btn-secondary btn-full" onclick="viewFullAnalysis()">📊 View Full Analysis</button>
+                            <button class="btn btn-secondary btn-full" onclick="saveToHistory()">💾 Save to History</button>
                         </div>
-                        <div class="budget-stat">
-                            <span class="budget-stat-label">Monthly Limit</span>
-                            <span id="budget-limit" class="budget-stat-value">500</span>
-                        </div>
-                    </div>
-
-                    <!-- Alert -->
-                    <div id="budget-alert" class="budget-alert hidden">
-                        <div class="budget-alert-title">⚠️ Budget Alert</div>
-                        <div class="budget-alert-text">You've used 75% of your monthly budget</div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="budget-actions">
-                        <button class="btn btn-secondary btn-full" onclick="exportResults()">📤 Export Results</button>
-                        <button class="btn btn-secondary btn-full" onclick="resetBudget()">🔄 Reset Budget</button>
                     </div>
                 </aside>
             </div>
@@ -1533,90 +1436,148 @@
             }
         };
 
-        const BYOK_MODELS = {
-            'claude-4-sonnet-byok': {
-                name: 'Claude 4 Sonnet',
-                provider: 'Anthropic (BYOK)',
-                cost: 2.0,
-                speed: 6,
-                quality: 9.0,
-                context: '200K',
-                bestFor: 'Balanced execution and reasoning',
-                category: 'premium',
-                apiCost: '$3/$15 per 1M tokens',
-                description: 'Latest Claude 4 with your own API key. Balanced performance.'
-            },
-            'claude-4-sonnet-thinking-byok': {
-                name: 'Claude 4 Sonnet (Thinking)',
-                provider: 'Anthropic (BYOK)',
-                cost: 3.0,
-                speed: 2,
-                quality: 9.5,
-                context: '200K',
-                bestFor: 'Deep architectural planning',
-                category: 'planning',
-                apiCost: '$3/$15 per 1M tokens',
-                warning: '3x token multiplier',
-                description: 'Claude 4 with thinking mode for deep planning.'
-            },
-            'claude-4-opus-byok': {
-                name: 'Claude 4 Opus',
-                provider: 'Anthropic (BYOK)',
-                cost: 4.0,
-                speed: 3,
-                quality: 10,
-                context: '200K',
-                bestFor: 'Maximum reasoning, complex analysis',
-                category: 'premium',
-                apiCost: '$15/$75 per 1M tokens',
-                description: 'Maximum reasoning capability with your own API key.'
-            },
-            'claude-4-opus-thinking-byok': {
-                name: 'Claude 4 Opus (Thinking)',
-                provider: 'Anthropic (BYOK)',
-                cost: 6.0,
-                speed: 2,
-                quality: 10,
-                context: '200K',
-                bestFor: 'Most complex architectural decisions',
-                category: 'planning',
-                apiCost: '$15/$75 per 1M tokens',
-                warning: '3x token multiplier',
-                description: 'Maximum reasoning with thinking mode.'
-            },
-            'gpt-4o-byok': {
-                name: 'GPT-4o',
-                provider: 'OpenAI (BYOK)',
-                cost: 1.5,
-                speed: 8,
-                quality: 8.5,
-                context: '128K',
-                bestFor: 'Fast execution with good quality',
-                category: 'balanced',
-                apiCost: '$2.50/$10 per 1M tokens',
-                description: 'Fast and reliable with your own OpenAI API key.'
-            },
-            'gemini-2-pro-byok': {
-                name: 'Gemini 2.0 Pro',
-                provider: 'Google (BYOK)',
-                cost: 2.0,
-                speed: 8,
-                quality: 9.0,
-                context: '1M+',
-                bestFor: 'Large context, long documents',
-                category: 'advanced',
-                apiCost: 'Variable pricing',
-                description: 'Large context window for massive documents.'
+        // ========================================
+        // PROMPT ENHANCEMENT FUNCTIONS
+        // ========================================
+
+        function displayCompactRecommendations(models) {
+            const container = document.getElementById('compact-cards');
+            const compactSection = document.getElementById('compact-recommendations');
+            if (!models || models.length === 0) {
+                compactSection.classList.add('hidden');
+                return;
             }
-        };
+            compactSection.classList.remove('hidden');
+            const html = models.map((model, index) => 
+                '<div class="compact-card rank-' + (index + 1) + '" onclick="scrollToModel(' + index + ')">' +
+                '<div class="compact-card-header">' +
+                '<div><div class="compact-rank rank-' + (index + 1) + '">#' + (index + 1) + '</div></div>' +
+                '<div style="flex: 1; margin-left: 12px;">' +
+                '<div class="compact-model-name">' + model.name + '</div>' +
+                '<div class="compact-provider">' + model.provider + '</div>' +
+                '</div></div>' +
+                '<div class="compact-metrics">' +
+                '<div class="compact-metric">💰 <span class="compact-metric-value">' + (model.cost === 0 ? 'FREE' : model.cost + 'cr') + '</span></div>' +
+                '<div class="compact-metric">⚡ <span class="compact-metric-value">' + model.speed + '/10</span></div>' +
+                '<div class="compact-metric">✨ <span class="compact-metric-value">' + model.quality + '/10</span></div>' +
+                '</div>' +
+                '<div class="compact-best-for">' + model.bestFor + '</div>' +
+                '</div>'
+            ).join('');
+            container.innerHTML = html;
+        }
+
+        function enhancePrompt(original, analysis) {
+            const gaps = identifyGaps(original, analysis);
+            const enhanced = buildEnhancedPrompt(original, gaps, analysis);
+            return { 
+                enhanced: enhanced, 
+                gaps: gaps, 
+                improvements: ['Added specific file references', 'Clarified expected deliverables', 'Included time/budget constraints', 'Enhanced technical specificity'].filter((_, i) => gaps.length > i) 
+            };
+        }
+
+        function identifyGaps(text, analysis) {
+            const gaps = [];
+            if (!/@\w+/.test(text)) gaps.push('Missing file references (@ComponentName, @utils/helpers.ts)');
+            if (!/\d+\s*(files?|components?)/.test(text)) gaps.push('No scope quantification (number of files/components)');
+            if (!/deadline|urgent|asap|time|hours?|days?/i.test(text)) gaps.push('No time constraint specified');
+            if (!/budget|cost|cheap|premium|credits?/i.test(text)) gaps.push('No budget constraint mentioned');
+            if (!/test|tests|testing|spec/i.test(text) && analysis.taskType !== 'testing') gaps.push('Testing requirements not specified');
+            if (text.length < 50) gaps.push('Prompt is too vague - add more context');
+            return gaps;
+        }
+
+        function buildEnhancedPrompt(original, gaps, analysis) {
+            let enhanced = '## Objective\n' + original + '\n\n';
+            if (gaps.some(g => g.includes('file references'))) enhanced += '## Files to Modify\n<mark>@ComponentName.tsx, @utils/helpers.ts</mark> (Please specify actual files)\n\n';
+            if (gaps.some(g => g.includes('scope quantification'))) enhanced += '## Scope\n<mark>Estimated files: 3-5 components</mark>\n\n';
+            if (gaps.some(g => g.includes('time constraint'))) {
+                enhanced += '## Timeline\n';
+                if (analysis.urgency >= 7) enhanced += '<mark>Urgent - Complete within 2 hours</mark>\n\n';
+                else enhanced += '<mark>Standard priority - Complete within 1-2 days</mark>\n\n';
+            }
+            if (gaps.some(g => g.includes('budget'))) {
+                enhanced += '## Budget Constraints\n';
+                if (analysis.budget === 'low') enhanced += '<mark>Use budget-friendly models (SWE-1.5-mini, GPT-5.2 FREE)</mark>\n\n';
+                else enhanced += '<mark>No budget constraints - use best quality models</mark>\n\n';
+            }
+            enhanced += '## Expected Deliverables\n<mark>- Refactored code with improved structure\n- Updated tests (if applicable)\n- Documentation for changed components</mark>\n';
+            return enhanced;
+        }
+
+        function displayPromptEnhancement(original, analysis) {
+            const enhancement = enhancePrompt(original, analysis);
+            const section = document.getElementById('prompt-enhancement');
+            section.classList.remove('hidden');
+            document.getElementById('original-text').textContent = original;
+            document.getElementById('enhanced-text').innerHTML = enhancement.enhanced;
+            const gapsList = document.getElementById('gaps-list');
+            gapsList.innerHTML = enhancement.gaps.map(gap => '<li>' + gap + '</li>').join('');
+        }
+
+        function togglePromptComparison() {
+            const toggle = event.target.closest('.accordion-toggle');
+            const content = toggle.nextElementSibling;
+            toggle.classList.toggle('active');
+            content.classList.toggle('show');
+        }
+
+        function copyEnhancedPrompt() {
+            const text = document.getElementById('enhanced-text').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Enhanced prompt copied to clipboard!', 'success');
+                if ('vibrate' in navigator) navigator.vibrate(10);
+            }).catch(() => showToast('Failed to copy to clipboard', 'error'));
+        }
+
+        function refineAgain() {
+            const enhanced = document.getElementById('enhanced-text').textContent;
+            document.getElementById('windsurf-input').value = enhanced;
+            showToast('Enhanced prompt loaded into input', 'info');
+            document.getElementById('windsurf-input').focus();
+        }
+
+        function viewFullAnalysis() {
+            const resultsSection = document.getElementById('windsurf-results');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function saveToHistory() {
+            const analysis = STATE.lastAnalysis;
+            const recommendations = STATE.lastRecommendations;
+            const timestamp = new Date().toISOString();
+            try {
+                let history = JSON.parse(localStorage.getItem('windsurf_history') || '[]');
+                history.unshift({ 
+                    timestamp, 
+                    analysis, 
+                    recommendations: recommendations.slice(0, 3).map(m => ({ name: m.name, provider: m.provider })) 
+                });
+                history = history.slice(0, 10);
+                localStorage.setItem('windsurf_history', JSON.stringify(history));
+                showToast('Saved to history', 'success');
+            } catch (error) {
+                showToast('Failed to save to history', 'error');
+            }
+        }
+
+        function scrollToModel(index) {
+            const modelCards = document.querySelectorAll('.model-card');
+            if (modelCards[index]) {
+                modelCards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                modelCards[index].style.animation = 'pulse 0.5s';
+            }
+        }
 
         // ========================================
         // PRESETS SYSTEM (9 Total)
         // ========================================
-        
+
         const PRESETS = {
             backend: {
                 name: 'Backend Development',
+                icon: '',
                 icon: '⚙️',
                 description: 'API, database, server-side logic',
                 defaultModel: 'swe-1.5',
@@ -1688,19 +1649,10 @@
         const STATE = {
             currentTab: 'windsurf',
             autoModeEnabled: {
-                windsurf: true,
-                byok: true
+                windsurf: true
             },
             triangleState: {
                 windsurf: {
-                    x: 200,
-                    y: 175,
-                    isDragging: false,
-                    touchId: null,
-                    history: [{ x: 200, y: 175 }],
-                    historyIndex: 0
-                },
-                byok: {
                     x: 200,
                     y: 175,
                     isDragging: false,
@@ -1713,147 +1665,6 @@
             lastAnalysis: null,
             lastRecommendations: null
         };
-
-        // ========================================
-        // BUDGET TRACKER CLASS
-        // ========================================
-        
-        class BudgetTracker {
-            constructor() {
-                this.data = this.load();
-                this.init();
-            }
-            
-            load() {
-                try {
-                    const saved = localStorage.getItem('windsurf_budget');
-                    if (saved) {
-                        const data = JSON.parse(saved);
-                        // Check if month changed
-                        if (this.isNewMonth(data.lastReset)) {
-                            return this.reset();
-                        }
-                        return data;
-                    }
-                } catch (error) {
-                    console.warn('Failed to load budget data:', error);
-                    showToast('Budget data corrupted, resetting...', 'warning');
-                }
-                return this.reset();
-            }
-            
-            reset() {
-                return {
-                    monthlyLimit: 500,
-                    creditsUsed: 0,
-                    lastReset: new Date().toISOString(),
-                    history: [],
-                    breakdown: {
-                        debugging: 0,
-                        planning: 0,
-                        backend: 0,
-                        frontend: 0,
-                        testing: 0,
-                        refactoring: 0,
-                        general: 0
-                    }
-                };
-            }
-            
-            isNewMonth(lastResetStr) {
-                const lastReset = new Date(lastResetStr);
-                const now = new Date();
-                return lastReset.getMonth() !== now.getMonth() || 
-                       lastReset.getFullYear() !== now.getFullYear();
-            }
-            
-            addUsage(credits, taskType) {
-                this.data.creditsUsed += credits;
-                this.data.breakdown[taskType] = (this.data.breakdown[taskType] || 0) + credits;
-                
-                // Add to history
-                const today = new Date().toISOString().split('T')[0];
-                const existing = this.data.history.find(h => h.date === today);
-                if (existing) {
-                    existing.credits += credits;
-                } else {
-                    this.data.history.push({ date: today, credits });
-                }
-                
-                // Keep only last 7 days
-                this.data.history = this.data.history.slice(-7);
-                
-                this.save();
-                this.updateUI();
-                this.checkAlerts();
-            }
-            
-            checkAlerts() {
-                const percent = (this.data.creditsUsed / this.data.monthlyLimit) * 100;
-                const alertEl = document.getElementById('budget-alert');
-                
-                if (percent >= 90) {
-                    alertEl.classList.remove('hidden');
-                    alertEl.classList.add('critical');
-                    alertEl.querySelector('.budget-alert-title').textContent = '🚨 Critical Budget Alert';
-                    alertEl.querySelector('.budget-alert-text').textContent = `You've used ${Math.round(percent)}% of your monthly budget!`;
-                } else if (percent >= 75) {
-                    alertEl.classList.remove('hidden', 'critical');
-                    alertEl.querySelector('.budget-alert-title').textContent = '⚠️ Budget Alert';
-                    alertEl.querySelector('.budget-alert-text').textContent = `You've used ${Math.round(percent)}% of your monthly budget`;
-                } else {
-                    alertEl.classList.add('hidden');
-                }
-            }
-            
-            updateUI() {
-                const percent = Math.min(100, (this.data.creditsUsed / this.data.monthlyLimit) * 100);
-                const circumference = 2 * Math.PI * 70;
-                const offset = circumference - (percent / 100) * circumference;
-                
-                const fillEl = document.getElementById('budget-circle-fill');
-                fillEl.style.strokeDashoffset = offset;
-                
-                // Update color based on percentage
-                fillEl.classList.remove('warning', 'critical');
-                if (percent >= 90) {
-                    fillEl.classList.add('critical');
-                } else if (percent >= 75) {
-                    fillEl.classList.add('warning');
-                }
-                
-                // Update text values
-                document.getElementById('budget-percent').textContent = `${Math.round(percent)}%`;
-                document.getElementById('budget-used').textContent = this.data.creditsUsed.toFixed(1);
-                document.getElementById('budget-remaining').textContent = Math.max(0, this.data.monthlyLimit - this.data.creditsUsed).toFixed(1);
-                document.getElementById('budget-limit').textContent = this.data.monthlyLimit;
-            }
-            
-            save() {
-                try {
-                    localStorage.setItem('windsurf_budget', JSON.stringify(this.data));
-                } catch (error) {
-                    console.error('Failed to save budget data:', error);
-                    if (error.name === 'QuotaExceededError') {
-                        showToast('Storage quota exceeded. Please clear some data.', 'error');
-                    } else {
-                        showToast('Failed to save budget data', 'error');
-                    }
-                }
-            }
-            
-            init() {
-                this.updateUI();
-            }
-            
-            reset() {
-                if (confirm('Are you sure you want to reset your budget tracker? This will clear all usage data.')) {
-                    this.data = this.reset();
-                    this.save();
-                    this.updateUI();
-                }
-            }
-        }
 
         // ========================================
         // TRIANGLE SELECTOR CLASS (FIXED)
@@ -2335,25 +2146,6 @@
             return scored;
         }
         
-        function rankByokModels(analysis) {
-            const scored = Object.entries(BYOK_MODELS)
-                .map(([key, model]) => {
-                    let score = 50; // baseline
-                    
-                    // Similar scoring logic for BYOK models
-                    if (analysis.complexity >= 7 && model.quality >= 8) score += 15;
-                    if (analysis.speed === 'critical' && model.speed >= 8) score += 20;
-                    if (analysis.needsPlanning && model.category === 'planning') score += 25;
-                    if (analysis.isDebugging && model.quality >= 8) score += 15;
-                    
-                    return { key, ...model, score };
-                })
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 3);
-            
-            return scored;
-        }
-        
         // ========================================
         // UI FUNCTIONS
         // ========================================
@@ -2401,25 +2193,14 @@
             STATE.lastAnalysis = analysis;
             STATE.lastRecommendations = recommendations;
             
+            // Display compact recommendations in sidebar
+            displayCompactRecommendations(recommendations);
+            
+            // Display prompt enhancement features
+            displayPromptEnhancement(input, analysis);
+            
+            // Display full results
             displayResults('windsurf', recommendations, analysis);
-            
-            // Update budget tracker
-            if (recommendations.length > 0) {
-                budgetTracker.addUsage(recommendations[0].cost, analysis.taskType);
-            }
-        }
-        
-        function analyzeByok() {
-            const input = document.getElementById('byok-input').value.trim();
-            if (!input) {
-                showToast('Please describe your task', 'warning');
-                return;
-            }
-            
-            const analysis = analyzeTask(input);
-            const recommendations = rankByokModels(analysis);
-            
-            displayResults('byok', recommendations, analysis);
         }
         
         function displayResults(tab, recommendations, analysis) {
@@ -2564,10 +2345,6 @@
             return markdown;
         }
         
-        function resetBudget() {
-            budgetTracker.reset();
-        }
-        
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -2588,7 +2365,6 @@
         
         function initializePresets() {
             const windsurfPresetsEl = document.getElementById('presets-windsurf');
-            const byokPresetsEl = document.getElementById('presets-byok');
             
             Object.entries(PRESETS).forEach(([key, preset]) => {
                 // Windsurf presets
@@ -2601,19 +2377,6 @@
                 `;
                 windsurfBtn.onclick = () => applyPreset('windsurf', key);
                 windsurfPresetsEl.appendChild(windsurfBtn);
-                
-                // BYOK presets (subset)
-                if (['backend', 'frontend', 'planning', 'debugging'].includes(key)) {
-                    const byokBtn = document.createElement('button');
-                    byokBtn.className = 'preset-btn';
-                    byokBtn.innerHTML = `
-                        <div class="preset-icon">${preset.icon}</div>
-                        <div class="preset-name">${preset.name}</div>
-                        <div class="preset-desc">${preset.description}</div>
-                    `;
-                    byokBtn.onclick = () => applyPreset('byok', key);
-                    byokPresetsEl.appendChild(byokBtn);
-                }
             });
         }
         
@@ -2663,28 +2426,22 @@
         // INITIALIZATION
         // ========================================
         
-        let budgetTracker;
         let triangleSelectors = {};
         
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize budget tracker
-            budgetTracker = new BudgetTracker();
-            
             // Initialize triangle selectors
             triangleSelectors.windsurf = new TriangleSelector('triangle-canvas-windsurf', 'windsurf');
-            triangleSelectors.byok = new TriangleSelector('triangle-canvas-byok', 'byok');
             
             // Initialize presets
             initializePresets();
             
             // Set initial auto mode states
             STATE.autoModeEnabled.windsurf = document.getElementById('auto-mode-windsurf').checked;
-            STATE.autoModeEnabled.byok = document.getElementById('auto-mode-byok').checked;
             
             // Load saved preferences
             loadPreferences();
             
-            console.log('Windsurf Model Selector v3.0 initialized');
+            console.log('Windsurf Model Selector v4.0 initialized');
         });
         
         function loadPreferences() {
@@ -2693,20 +2450,13 @@
                 if (saved) {
                     const prefs = JSON.parse(saved);
                     
-                    // Restore tab
-                    if (prefs.defaultTab) {
-                        switchTab(prefs.defaultTab);
-                    }
-                    
                     // Restore auto mode states
                     if (prefs.autoMode) {
                         STATE.autoModeEnabled = prefs.autoMode;
                         document.getElementById('auto-mode-windsurf').checked = prefs.autoMode.windsurf;
-                        document.getElementById('auto-mode-byok').checked = prefs.autoMode.byok;
                         
                         // Show/hide manual controls
                         document.getElementById('manual-control-windsurf').classList.toggle('hidden', prefs.autoMode.windsurf);
-                        document.getElementById('manual-control-byok').classList.toggle('hidden', prefs.autoMode.byok);
                     }
                     
                     // Restore triangle positions
@@ -2731,8 +2481,7 @@
                     defaultTab: STATE.currentTab,
                     autoMode: STATE.autoModeEnabled,
                     trianglePositions: {
-                        windsurf: { x: triangleSelectors.windsurf.state.x, y: triangleSelectors.windsurf.state.y },
-                        byok: { x: triangleSelectors.byok.state.x, y: triangleSelectors.byok.state.y }
+                        windsurf: { x: triangleSelectors.windsurf.state.x, y: triangleSelectors.windsurf.state.y }
                     }
                 };
                 
