@@ -468,12 +468,18 @@
         }
         
         .btn-secondary:hover {
-            background: var(--bg-hover);
-            border-color: var(--border-hover);
+            padding: var(--space-3);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
         }
         
         /* ========================================
-           SIDEBAR RECOMMENDATIONS
+           SIDEBAR RECOMMENDATIONS (RE-OVERHAULED)
         ======================================== */
         
         .recommendations-sidebar {
@@ -487,19 +493,22 @@
         }
         
         .sidebar-title {
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
             margin-bottom: var(--space-3);
             padding-bottom: var(--space-2);
             border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
         }
         
         #compact-cards {
             display: flex;
             flex-direction: column;
-            gap: var(--space-3);
+            gap: var(--space-2);
         }
         
         .compact-card {
@@ -507,51 +516,99 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: var(--space-3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             transition: all var(--transition-fast);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
         .compact-card:hover {
             border-color: var(--primary);
             background: var(--bg-hover);
+            transform: translateX(2px);
+        }
+        
+        .compact-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
         }
         
         .compact-rank {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 800;
             color: var(--text-muted);
-            width: 24px;
+            background: var(--bg-elevated);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
         }
         
-        .compact-info {
+        .compact-rank.rank-1 { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .compact-rank.rank-2 { color: var(--primary); border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+        .compact-rank.rank-3 { color: var(--warning); border-color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        
+        .compact-title {
             flex: 1;
-            margin: 0 var(--space-3);
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
         }
         
         .compact-name {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.9rem;
             color: var(--text-primary);
         }
         
-        .compact-cost {
+        .compact-provider {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .compact-metrics-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-elevated);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-2);
+            border: 1px solid var(--border);
+        }
+        
+        .c-metric {
             font-size: 0.75rem;
-            color: var(--success);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
         }
         
-        .compact-score {
+        .c-metric span {
+            color: var(--text-primary);
             font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--primary);
         }
         
-        /* Prompt Enhancement Styling */
-        .prompt-comparison {
-            margin-bottom: var(--space-4);
+        .compact-footer {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-top: 4px;
+            border-top: 1px solid var(--border);
         }
+        
+        /* ========================================
+           ACCORDION
+        ======================================== */
         
         .accordion-toggle {
             width: 100%;
@@ -1479,18 +1536,19 @@
             compactSection.classList.remove('hidden');
             const html = models.map((model, index) => 
                 '<div class="compact-card rank-' + (index + 1) + '" onclick="scrollToModel(' + index + ')">' +
-                '<div class="compact-card-header">' +
-                '<div><div class="compact-rank rank-' + (index + 1) + '">#' + (index + 1) + '</div></div>' +
-                '<div style="flex: 1; margin-left: 12px;">' +
-                '<div class="compact-model-name">' + model.name + '</div>' +
+                '<div class="compact-header">' +
+                '<div class="compact-rank rank-' + (index + 1) + '">#' + (index + 1) + '</div>' +
+                '<div class="compact-title">' +
+                '<div class="compact-name">' + model.name + '</div>' +
                 '<div class="compact-provider">' + model.provider + '</div>' +
-                '</div></div>' +
-                '<div class="compact-metrics">' +
-                '<div class="compact-metric">💰 <span class="compact-metric-value">' + (model.cost === 0 ? 'FREE' : model.cost + 'cr') + '</span></div>' +
-                '<div class="compact-metric">⚡ <span class="compact-metric-value">' + model.speed + '/10</span></div>' +
-                '<div class="compact-metric">✨ <span class="compact-metric-value">' + model.quality + '/10</span></div>' +
                 '</div>' +
-                '<div class="compact-best-for">' + model.bestFor + '</div>' +
+                '</div>' +
+                '<div class="compact-metrics-row">' +
+                '<div class="c-metric" title="Cost">💰 <span>' + (model.cost === 0 ? 'FREE' : model.cost) + '</span></div>' +
+                '<div class="c-metric" title="Speed">⚡ <span>' + model.speed + '</span></div>' +
+                '<div class="c-metric" title="Quality">✨ <span>' + model.quality + '</span></div>' +
+                '</div>' +
+                '<div class="compact-footer">' + model.bestFor + '</div>' +
                 '</div>'
             ).join('');
             container.innerHTML = html;
