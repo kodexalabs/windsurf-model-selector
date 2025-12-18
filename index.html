@@ -2173,39 +2173,65 @@
         
         class TriangleSelector {
             constructor(canvasId, tab) {
-                this.canvas = document.getElementById(canvasId);
-                this.ctx = this.canvas.getContext('2d');
-                this.tab = tab;
-                this.state = STATE.triangleState[tab];
-                
-                // Track canvas dimensions
-                this.width = 0;
-                this.height = 0;
-                this.dpr = window.devicePixelRatio || 1;
-                
-                // Triangle geometry
-                this.tri = {
-                    top: { x: 0, y: 0 },
-                    left: { x: 0, y: 0 },
-                    right: { x: 0, y: 0 },
-                    side: 0,
-                    height: 0,
-                    center: { x: 0, y: 0 }
-                };
-                
-                this.init();
+                try {
+                    this.canvas = document.getElementById(canvasId);
+                    if (!this.canvas) {
+                        throw new Error(`Canvas element with ID '${canvasId}' not found`);
+                    }
+                    
+                    this.ctx = this.canvas.getContext('2d');
+                    if (!this.ctx) {
+                        throw new Error('Failed to get 2D context from canvas');
+                    }
+                    
+                    this.tab = tab;
+                    this.state = STATE.triangleState[tab];
+                    
+                    // Track canvas dimensions
+                    this.width = 0;
+                    this.height = 0;
+                    this.dpr = window.devicePixelRatio || 1;
+                    
+                    // Triangle geometry
+                    this.tri = {
+                        top: { x: 0, y: 0 },
+                        left: { x: 0, y: 0 },
+                        right: { x: 0, y: 0 },
+                        side: 0,
+                        height: 0,
+                        center: { x: 0, y: 0 }
+                    };
+                    
+                    // Store bound event handlers for cleanup
+                    this.boundHandlers = {};
+                    
+                    // Initialize
+                    this.init();
+                } catch (error) {
+                    console.error('TriangleSelector initialization failed:', error);
+                    showToast('Failed to initialize triangle selector', 'error');
+                }
             }
             
             init() {
-                this.bindEvents();
-                this.resize();
-                
-                // Resize observer to handle container changes
-                const observer = new ResizeObserver(() => this.resize());
-                observer.observe(this.canvas.parentElement);
-                
-                // Initial draw after a short delay to ensure layout is computed
-                setTimeout(() => this.resize(), 100);
+                try {
+                    this.bindEvents();
+                    this.resize();
+                    
+                    // Add accessibility attributes
+                    this.canvas.setAttribute('tabindex', '0');
+                    this.canvas.setAttribute('role', 'slider');
+                    this.canvas.setAttribute('aria-label', 'Model preference selector - Use arrow keys to adjust quality, speed, and balance');
+                    
+                    // Resize observer to handle container changes
+                    this.resizeObserver = new ResizeObserver(() => this.resize());
+                    this.resizeObserver.observe(this.canvas.parentElement);
+                    
+                    // Initial draw after a short delay to ensure layout is computed
+                    setTimeout(() => this.resize(), 100);
+                } catch (error) {
+                    console.error('TriangleSelector init failed:', error);
+                }
             }
             
             resize() {
@@ -2229,7 +2255,8 @@
             }
             
             calculateGeometry() {
-                const padding = 40;
+                // Dynamic padding based on screen size
+                const padding = Math.max(20, Math.min(40, this.width * 0.05));
                 const availW = this.width - (padding * 2);
                 const availH = this.height - (padding * 2);
                 
@@ -2271,18 +2298,27 @@
             }
             
             bindEvents() {
+                // Store bound handlers for cleanup
+                this.boundHandlers.mousedown = this.handleStart.bind(this);
+                this.boundHandlers.mousemove = this.handleMove.bind(this);
+                this.boundHandlers.mouseup = this.handleEnd.bind(this);
+                this.boundHandlers.touchstart = this.handleTouchStart.bind(this);
+                this.boundHandlers.touchmove = this.handleTouchMove.bind(this);
+                this.boundHandlers.touchend = this.handleTouchEnd.bind(this);
+                this.boundHandlers.keydown = this.handleKeyDown.bind(this);
+                
                 // Mouse events
-                this.canvas.addEventListener('mousedown', this.handleStart.bind(this));
-                window.addEventListener('mousemove', this.handleMove.bind(this));
-                window.addEventListener('mouseup', this.handleEnd.bind(this));
+                this.canvas.addEventListener('mousedown', this.boundHandlers.mousedown);
+                window.addEventListener('mousemove', this.boundHandlers.mousemove);
+                window.addEventListener('mouseup', this.boundHandlers.mouseup);
                 
                 // Touch events
-                this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-                window.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
-                window.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                this.canvas.addEventListener('touchstart', this.boundHandlers.touchstart, { passive: false });
+                window.addEventListener('touchmove', this.boundHandlers.touchmove, { passive: false });
+                window.addEventListener('touchend', this.boundHandlers.touchend);
                 
                 // Keyboard navigation
-                this.canvas.addEventListener('keydown', this.handleKeyDown.bind(this));
+                this.canvas.addEventListener('keydown', this.boundHandlers.keydown);
                 
                 // Double-tap to reset
                 this.lastTap = 0;
@@ -2538,11 +2574,43 @@
             }
             
             resetToCenter() {
-                this.calculateGeometry(); // Ensures we have current center
-                this.state.x = this.tri.center.x; // Use calculated centroid
-                this.state.y = this.tri.top.y + this.tri.height * 2/3; 
-                this.saveToHistory();
-                this.draw();
+                try {
+                    this.calculateGeometry(); // Ensures we have current center
+                    this.state.x = this.tri.center.x; // Use calculated centroid
+                    this.state.y = this.tri.top.y + this.tri.height * 2/3; 
+                    this.saveToHistory();
+                    this.draw();
+                } catch (error) {
+                    console.error('Failed to reset triangle to center:', error);
+                }
+            }
+            
+            /**
+             * Cleanup method to prevent memory leaks
+             */
+            destroy() {
+                try {
+                    // Remove event listeners
+                    this.canvas.removeEventListener('mousedown', this.boundHandlers.mousedown);
+                    window.removeEventListener('mousemove', this.boundHandlers.mousemove);
+                    window.removeEventListener('mouseup', this.boundHandlers.mouseup);
+                    this.canvas.removeEventListener('touchstart', this.boundHandlers.touchstart);
+                    window.removeEventListener('touchmove', this.boundHandlers.touchmove);
+                    window.removeEventListener('touchend', this.boundHandlers.touchend);
+                    this.canvas.removeEventListener('keydown', this.boundHandlers.keydown);
+                    
+                    // Disconnect resize observer
+                    if (this.resizeObserver) {
+                        this.resizeObserver.disconnect();
+                    }
+                    
+                    // Clear canvas
+                    if (this.ctx) {
+                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                } catch (error) {
+                    console.error('Error during TriangleSelector cleanup:', error);
+                }
             }
         }
 
@@ -3003,54 +3071,74 @@
         }
         
         function applyPreset(tab, presetKey) {
-            const preset = PRESETS[presetKey];
-            
-            // Update active preset
-            document.querySelectorAll(`#${tab}-tab .preset-btn`).forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.closest('.preset-btn').classList.add('active');
-            
-            // Update triangle position if in manual mode
-            if (!STATE.autoModeEnabled[tab]) {
-                const selector = triangleSelectors[tab];
-                if (selector) {
-                    const pos = preset.trianglePos;
-                    // Barycentric mapping
-                    const total = pos.quality + pos.speed + pos.balanced;
-                    const wQ = pos.quality / total;
-                    const wS = pos.speed / total;
-                    const wB = pos.balanced / total;
-                    
-                    const { top, left, right } = selector.tri;
-                    
-                    selector.state.x = (wQ * top.x) + (wS * left.x) + (wB * right.x);
-                    selector.state.y = (wQ * top.y) + (wS * left.y) + (wB * right.y);
-                    
-                    selector.saveToHistory();
-                    selector.draw();
+            try {
+                const preset = PRESETS[presetKey];
+                if (!preset) {
+                    console.error(`Preset '${presetKey}' not found`);
+                    showToast('Preset not found', 'error');
+                    return;
                 }
+                
+                // Update active preset
+                const presetButtons = document.querySelectorAll(`#${tab}-tab .preset-btn`);
+                presetButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Safely get the clicked button
+                const activeBtn = event?.target?.closest('.preset-btn');
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+                
+                // Update triangle position if in manual mode
+                if (!STATE.autoModeEnabled[tab]) {
+                    const selector = triangleSelectors[tab];
+                    if (selector && selector.tri && preset.trianglePos) {
+                        const pos = preset.trianglePos;
+                        // Barycentric mapping
+                        const total = pos.quality + pos.speed + pos.balanced;
+                        if (total > 0) {
+                            const wQ = pos.quality / total;
+                            const wS = pos.speed / total;
+                            const wB = pos.balanced / total;
+                            
+                            const { top, left, right } = selector.tri;
+                            
+                            selector.state.x = (wQ * top.x) + (wS * left.x) + (wB * right.x);
+                            selector.state.y = (wQ * top.y) + (wS * left.y) + (wB * right.y);
+                            
+                            selector.saveToHistory();
+                            selector.draw();
+                        }
+                    }
+                }
+                
+                // Set input placeholder
+                const input = document.getElementById(`${tab}-input`);
+                if (input) {
+                    const examples = {
+                        backend: 'Create REST API with authentication and database integration',
+                        frontend: 'Build responsive React component with state management',
+                        planning: 'Design microservices architecture for e-commerce platform',
+                        debugging: 'Fix authentication bug that prevents user login',
+                        quickFixes: 'Update button text and fix minor styling issue',
+                        legacyRefactor: 'Modernize legacy codebase with current best practices',
+                        productionHotfix: 'Critical production bug causing system downtime',
+                        learning: 'Experiment with new framework and build sample project',
+                        testGeneration: 'Write comprehensive unit tests for existing code'
+                    };
+                    
+                    if (examples[presetKey]) {
+                        input.placeholder = `Example: ${examples[presetKey]}`;
+                    }
+                }
+                
+                showToast(`Applied ${preset.name} preset`, 'success');
+            } catch (error) {
+                console.error('Error applying preset:', error);
+                showToast('Failed to apply preset', 'error');
             }
-            
-            // Set input placeholder
-            const input = document.getElementById(`${tab}-input`);
-            const examples = {
-                backend: 'Create REST API with authentication and database integration',
-                frontend: 'Build responsive React component with state management',
-                planning: 'Design microservices architecture for e-commerce platform',
-                debugging: 'Fix authentication bug that prevents user login',
-                quickFixes: 'Update button text and fix minor styling issue',
-                legacyRefactor: 'Modernize legacy codebase with current best practices',
-                productionHotfix: 'Critical production bug causing system downtime',
-                learning: 'Experiment with new framework and build sample project',
-                testGeneration: 'Write comprehensive unit tests for existing code'
-            };
-            
-            if (examples[presetKey]) {
-                input.placeholder = `Example: ${examples[presetKey]}`;
-            }
-            
-            showToast(`Applied ${preset.name} preset`, 'success');
         }
         
         // ========================================
@@ -3146,9 +3234,43 @@
         document.addEventListener('touchend', () => {
             setTimeout(savePreferences, 100);
         });
-        // ========================================
-        // NEW FEATURES LOGIC (v4.0)
-        // ========================================
+        
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                analyzeWindsurf();
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'h' || e.key === 'H')) {
+                e.preventDefault();
+                showHistory();
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B')) {
+                e.preventDefault();
+                showCalculator();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+                e.preventDefault();
+                showSettings();
+            }
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+            if (e.key === '?') {
+                if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+                    showShortcuts();
+                }
+            }
+        });
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
 
         function showHistory() {
             const modal = document.getElementById('history-modal');
