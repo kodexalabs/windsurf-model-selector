@@ -1,4 +1,4 @@
-# 🌊 Windsurf Model Selector v3.0
+# 🌊 Windsurf Model Selector v6.0
 
 **Smart AI Model Selection for Windsurf IDE** - Analyze your development tasks and get optimal model recommendations with real-time cost tracking.
 
@@ -202,4 +202,4 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 **Made with ❤️ by Kodexa Labs**
 
-*Version 3.0 - December 2025*
+*Version 6.0 - December 2025*

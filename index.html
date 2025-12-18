@@ -7,12 +7,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Windsurf Model Selector v3.0">
+    <meta property="og:title" content="Windsurf Model Selector v6.0">
     <meta property="og:description" content="Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
-    <title>Windsurf Model Selector v4.0 - Smart Prompt Enhancement</title>
+    <title>Windsurf Model Selector v6.0 - Smart Prompt Enhancement</title>
     
     <style>
         /* ========================================
@@ -1019,8 +1019,6 @@
             color: var(--text-secondary);
             margin-right: 4px;
             margin-bottom: 2px;
-        }
-        
         .pill.good { color: var(--success); background: rgba(16, 185, 129, 0.1); }
         .pill.bad { color: var(--error); background: rgba(239, 68, 68, 0.1); }
         
@@ -1032,6 +1030,173 @@
             border-top: 1px solid var(--border);
         }
         
+        /* ========================================
+           MODALS & OVERLAYS (NEW)
+        ======================================== */
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform var(--transition-base);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--space-2);
+            line-height: 1;
+        }
+        
+        .modal-body {
+            padding: var(--space-4);
+        }
+        
+        /* History Items */
+        .history-item {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .history-item:hover {
+            border-color: var(--primary);
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        /* Calculator Grid */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .calc-result {
+            background: var(--bg-elevated);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin-top: var(--space-4);
+            border: 1px solid var(--border);
+        }
+        
+        .calc-total {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success);
+            display: block;
+            margin: var(--space-2) 0;
+        }
+        
+        /* Shortcut Keys */
+        .key-combo {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .kbd {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-fast);
+        }
+
+        .tool-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
         /* ========================================
            RESPONSIVE DESIGN
         ======================================== */
@@ -1283,6 +1448,22 @@
                             </label>
                         </div>
 
+                        <!-- Toolbar -->
+                        <div class="toolbar">
+                            <button class="tool-btn" onclick="showHistory()" title="View Analysis History (Ctrl+H)">
+                                <span>📜 History</span>
+                            </button>
+                            <button class="tool-btn" onclick="showCalculator()" title="Budget Calculator (Ctrl+B)">
+                                <span>💰 Calculator</span>
+                            </button>
+                            <button class="tool-btn" onclick="showSettings()" title="Settings & Custom Models (Ctrl+,)">
+                                <span>⚙️ Settings</span>
+                            </button>
+                            <button class="tool-btn" onclick="showShortcuts()" title="Keyboard Shortcuts (?)">
+                                <span>⌨️ Shortcuts</span>
+                            </button>
+                        </div>
+
                         <!-- Presets -->
                         <div class="presets-section">
                             <h3>Quick Presets</h3>
@@ -1381,6 +1562,130 @@
                 </aside>
             </div>
         </main>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📜 Analysis History</div>
+                <button class="modal-close" onclick="closeModal('history-modal')">×</button>
+            </div>
+            <div class="modal-body" id="history-list">
+                <!-- History items will be injected here -->
+                <p class="text-muted text-center" style="text-align: center; color: var(--text-muted);">No history yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div id="calculator-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">💰 Budget Calculator</div>
+                <button class="modal-close" onclick="closeModal('calculator-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-section">
+                    <label class="input-label">Daily Coding Hours</label>
+                    <input type="range" id="calc-hours" min="1" max="12" value="4" oninput="calculateBudget()" style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                        <span>1h</span>
+                        <span id="calc-hours-val">4h</span>
+                        <span>12h</span>
+                    </div>
+                </div>
+                
+                <div class="input-section">
+                    <label class="input-label">Task Complexity (Avg)</label>
+                    <input type="range" id="calc-complexity" min="1" max="10" value="5" oninput="calculateBudget()" style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                        <span>Simple</span>
+                        <span id="calc-complexity-val">Medium</span>
+                        <span>Complex</span>
+                    </div>
+                </div>
+
+                <div class="calc-result">
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">Estimated Monthly Cost</div>
+                    <span class="calc-total" id="calc-total">$0.00</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);" id="calc-breakdown">Based on standard model usage mix</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ Settings</div>
+                <button class="modal-close" onclick="closeModal('settings-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Custom Models</h3>
+                    <div class="input-section">
+                        <textarea id="custom-model-json" placeholder='{"my-model": {"name": "My Model", "cost": 0.5, ...}}'></textarea>
+                        <p class="input-hint">Paste JSON definition for custom models</p>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="saveCustomModels()">Save Custom Models</button>
+                </div>
+                
+                <div class="settings-section" style="margin-top: 2rem;">
+                    <h3>Data Management</h3>
+                    <div class="grid grid-2" style="margin-bottom: 1rem;">
+                        <button class="btn btn-secondary" onclick="exportData()">📤 Export Data</button>
+                        <button class="btn btn-secondary" onclick="importData()">📥 Import Data</button>
+                    </div>
+                    <button class="btn btn-secondary btn-full" style="color: var(--error); border-color: var(--error);" onclick="clearAllData()">🗑️ Reset All Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">⌨️ Keyboard Shortcuts</div>
+                <button class="modal-close" onclick="closeModal('shortcuts-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-list">
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span>Analyze Task</span>
+                            <span class="key-combo"><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span></span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span>Clear Input</span>
+                            <span class="key-combo"><span class="kbd">Esc</span></span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span>Show History</span>
+                            <span class="key-combo"><span class="kbd">Ctrl</span> + <span class="kbd">H</span></span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span>Budget Calculator</span>
+                            <span class="key-combo"><span class="kbd">Ctrl</span> + <span class="kbd">B</span></span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span>Settings</span>
+                            <span class="key-combo"><span class="kbd">Ctrl</span> + <span class="kbd">,</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Container -->
@@ -2678,7 +2983,7 @@
             // Load saved preferences
             loadPreferences();
             
-            console.log('Windsurf Model Selector v4.0 initialized');
+            console.log('Windsurf Model Selector v6.0 initialized');
         });
         
         function loadPreferences() {
@@ -2752,6 +3057,193 @@
         document.addEventListener('touchend', () => {
             setTimeout(savePreferences, 100);
         });
+        // ========================================
+        // NEW FEATURES LOGIC (v4.0)
+        // ========================================
+
+        function showHistory() {
+            const modal = document.getElementById('history-modal');
+            const list = document.getElementById('history-list');
+            modal.classList.add('active');
+            
+            try {
+                const history = JSON.parse(localStorage.getItem('windsurf_history') || '[]');
+                if (history.length === 0) {
+                    list.innerHTML = '<p class="text-muted text-center" style="text-align: center; color: var(--text-muted);">No history yet.</p>';
+                    return;
+                }
+                
+                list.innerHTML = history.map((item, index) => `
+                    <div class="history-item" onclick="loadHistoryItem(${index})">
+                        <div class="history-header">
+                            <span>${new Date(item.timestamp).toLocaleString()}</span>
+                            <span>${item.analysis.taskType}</span>
+                        </div>
+                        <div style="font-size: 0.9rem; margin-bottom: 8px;">
+                            ${item.recommendations[0].name} (Score: ${Math.round(item.recommendations[0].score)})
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            complexity: ${item.analysis.complexity}, speed: ${item.analysis.speed}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<p style="color: var(--error)">Error loading history</p>';
+            }
+        }
+
+        function loadHistoryItem(index) {
+            try {
+                const history = JSON.parse(localStorage.getItem('windsurf_history') || '[]');
+                const item = history[index];
+                if (item) {
+                    STATE.lastAnalysis = item.analysis;
+                    STATE.lastRecommendations = item.recommendations; 
+                    showToast('History item loaded (Partial)', 'info');
+                    closeModal('history-modal');
+                }
+            } catch (e) {
+                showToast('Failed to load item', 'error');
+            }
+        }
+
+        function showCalculator() {
+            document.getElementById('calculator-modal').classList.add('active');
+            calculateBudget();
+        }
+
+        function calculateBudget() {
+            const hours = parseInt(document.getElementById('calc-hours').value);
+            const complexity = parseInt(document.getElementById('calc-complexity').value);
+            
+            document.getElementById('calc-hours-val').textContent = hours + 'h';
+            const complexityLabels = ['Very Simple', 'Simple', 'Basic', 'Low', 'Medium', 'Moderate', 'High', 'Heavy', 'Complex', 'Extreme'];
+            document.getElementById('calc-complexity-val').textContent = complexityLabels[complexity - 1] || 'Medium';
+            
+            const tasksPerHour = 4;
+            const totalTasks = hours * 20; 
+            
+            let avgCostPerTask = 0.5;
+            if (complexity > 3) avgCostPerTask = 0.8;
+            if (complexity > 6) avgCostPerTask = 1.5;
+            if (complexity > 8) avgCostPerTask = 2.2;
+            
+            const totalCost = Math.round(totalTasks * avgCostPerTask);
+            const dollarCost = (totalCost / 500) * 15; 
+            
+            document.getElementById('calc-total').textContent = `${totalCost} Credits`;
+            document.getElementById('calc-breakdown').textContent = `~$${dollarCost.toFixed(2)}/mo est.`;
+        }
+
+        function showSettings() {
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function showShortcuts() {
+            document.getElementById('shortcuts-modal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function saveCustomModels() {
+            try {
+                const json = document.getElementById('custom-model-json').value;
+                const models = JSON.parse(json);
+                localStorage.setItem('windsurf_custom_models', JSON.stringify(models));
+                Object.assign(WINDSURF_MODELS, models);
+                showToast('Custom models saved & loaded', 'success');
+                closeModal('settings-modal');
+            } catch (e) {
+                showToast('Invalid JSON format', 'error');
+            }
+        }
+
+        function exportData() {
+            const data = {
+                preferences: localStorage.getItem('windsurf_preferences'),
+                history: localStorage.getItem('windsurf_history'),
+                customModels: localStorage.getItem('windsurf_custom_models')
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'windsurf-selector-backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.preferences) localStorage.setItem('windsurf_preferences', data.preferences);
+                        if (data.history) localStorage.setItem('windsurf_history', data.history);
+                        if (data.customModels) localStorage.setItem('windsurf_custom_models', data.customModels);
+                        showToast('Data imported successfully. Reloading...', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } catch (err) {
+                        showToast('Failed to import data', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete all history and settings?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                analyzeWindsurf();
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'h' || e.key === 'H')) {
+                e.preventDefault();
+                showHistory();
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B')) {
+                e.preventDefault();
+                showCalculator();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+                e.preventDefault();
+                showSettings();
+            }
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+            if (e.key === '?') {
+                if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+                    showShortcuts();
+                }
+            }
+        });
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
