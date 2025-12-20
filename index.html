@@ -7,12 +7,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Windsurf Model Selector v6.0 - Kodexalabs Edition">
+    <meta property="og:title" content="Windsurf Model Selector v8.0 - Kodexalabs Edition">
     <meta property="og:description" content="Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
-    <title>Windsurf Model Selector v6.0 - Kodexalabs Edition</title>
+    <title>Windsurf Model Selector v8.0 - Kodexalabs Edition</title>
     
     <style>
         /* ========================================
@@ -180,67 +180,62 @@
         }
         
         /* ========================================
-           TABS
+           QUICK PRESETS BAR - HORIZONTAL LAYOUT
         ======================================== */
         
-        .tabs {
+        .presets-bar {
             display: flex;
             gap: var(--space-2);
-            margin-bottom: var(--space-4);
-            border-bottom: 1px solid hsl(var(--border));
-            padding-bottom: var(--space-2);
-        }
-        
-        .tab-btn {
-            padding: var(--space-2) var(--space-4);
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: hsl(var(--text-secondary));
-            transition: all var(--transition-base);
-            border-bottom: 2px solid transparent;
-            position: relative;
-            white-space: nowrap;
-            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-        }
-        
-        .tab-btn:hover {
-            color: hsl(var(--foreground));
-            background: hsl(var(--accent));
-        }
-        
-        .tab-btn.active {
-            color: hsl(var(--foreground));
-            border-bottom-color: hsl(var(--foreground));
-            background: hsl(var(--card));
-        }
-        
-        .tab-btn .badge {
-            display: inline-block;
-            margin-left: var(--space-2);
-            padding: 2px 6px;
-            background: hsl(var(--muted));
-            color: hsl(var(--foreground));
+            margin: var(--space-4) 0;
+            padding: var(--space-3);
+            background: hsl(var(--secondary));
             border: 1px solid hsl(var(--border));
-            border-radius: var(--radius-full);
-            font-size: 0.7rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+        
+        .presets-bar .preset-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-3) var(--space-2);
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-md);
+            color: hsl(var(--text-primary));
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .presets-bar .preset-btn:hover {
+            background: hsl(var(--accent));
+            border-color: hsl(var(--foreground));
+            transform: translateY(-2px);
+        }
+        
+        .presets-bar .preset-btn.active {
+            background: hsl(var(--accent));
+            border-color: hsl(var(--foreground));
+        }
+        
+        .presets-bar .preset-icon {
+            font-size: 1.2rem;
+        }
+        
+        .presets-bar .preset-name {
             font-weight: 600;
+            font-size: 0.85rem;
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-            animation: fadeIn var(--transition-base);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .presets-bar .preset-desc {
+            font-size: 0.7rem;
+            color: hsl(var(--text-muted));
+            line-height: 1.2;
         }
         
         /* ========================================
@@ -329,65 +324,7 @@
             background-color: hsl(var(--foreground));
         }
         
-        /* ========================================
-           PRESETS - MONOCHROME
-        ======================================== */
-        
-        .presets-section h3 {
-            font-size: 1rem;
-            margin-bottom: var(--space-2);
-        }
-        
-        .presets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: var(--space-2);
-            margin-bottom: var(--space-4);
-        }
-        
-        .preset-btn {
-            background: hsl(var(--secondary));
-            border: 1px solid hsl(var(--border));
-            border-radius: var(--radius-md);
-            padding: var(--space-3);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            text-align: left;
-            min-height: auto;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-        }
-        
-        .preset-btn:hover {
-            border-color: hsl(var(--foreground));
-            background: hsl(var(--accent));
-            transform: translateY(-1px);
-        }
-        
-        .preset-btn.active {
-            background: hsl(var(--card));
-            border-color: hsl(var(--foreground));
-            border: 2px solid hsl(var(--foreground));
-        }
-        
-        .preset-icon {
-            font-size: 1.25rem;
-            margin-bottom: var(--space-1);
-        }
-        
-        .preset-name {
-            font-weight: 600;
-            color: hsl(var(--foreground));
-            font-size: 0.85rem;
-        }
-        
-        .preset-desc {
-            font-size: 0.75rem;
-            color: hsl(var(--text-secondary));
-            line-height: 1.3;
-        }
-        
+                
         /* ========================================
            INPUT & BUTTONS - MONOCHROME
         ======================================== */
@@ -729,115 +666,85 @@
 <body>
     <div class="container">
         <header>
-            <h1>Windsurf Model Selector v6.0</h1>
+            <h1>Windsurf Model Selector v8.0</h1>
             <p class="subtitle">Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI</p>
         </header>
+        
+        <!-- Quick Presets Bar -->
+        <div class="presets-bar">
+            <button class="preset-btn" data-preset="debugging">
+                <div class="preset-icon">🐛</div>
+                <div class="preset-name">Debugging</div>
+                <div class="preset-desc">Code analysis and bug fixing</div>
+            </button>
+            <button class="preset-btn" data-preset="development">
+                <div class="preset-icon">💻</div>
+                <div class="preset-name">Development</div>
+                <div class="preset-desc">General coding tasks</div>
+            </button>
+            <button class="preset-btn" data-preset="design">
+                <div class="preset-icon">🎨</div>
+                <div class="preset-name">Design</div>
+                <div class="preset-desc">UI/UX and styling</div>
+            </button>
+            <button class="preset-btn" data-preset="documentation">
+                <div class="preset-icon">📚</div>
+                <div class="preset-name">Documentation</div>
+                <div class="preset-desc">Writing and docs</div>
+            </button>
+            <button class="preset-btn" data-preset="planning">
+                <div class="preset-icon">📋</div>
+                <div class="preset-name">Planning</div>
+                <div class="preset-desc">Architecture and strategy</div>
+            </button>
+            <button class="preset-btn" data-preset="optimization">
+                <div class="preset-icon">⚡</div>
+                <div class="preset-name">Optimization</div>
+                <div class="preset-desc">Performance tuning</div>
+            </button>
+        </div>
 
         <div class="grid grid-2">
             <!-- Main Content -->
             <div class="main-content">
-                <!-- Tabs -->
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="analyzer">
-                        Task Analyzer
-                        <span class="badge">AI</span>
-                    </button>
-                    <button class="tab-btn" data-tab="models">
-                        Model Browser
-                    </button>
-                    <button class="tab-btn" data-tab="presets">
-                        Quick Presets
-                    </button>
-                </div>
-
-                <!-- Tab Content -->
-                <div class="tab-content active" id="analyzer">
-                    <div class="card">
-                        <h2>Task Analysis</h2>
-                        
-                        <!-- Auto Mode Toggle -->
-                        <div class="auto-mode-section">
-                            <div>
-                                <div class="auto-mode-title">🤖 Auto-Analysis Mode</div>
-                                <div class="auto-mode-desc">AI will analyze your task and recommend the optimal model automatically</div>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="autoMode" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
+                <!-- Task Analysis (no tabs) -->
+                <div class="card">
+                    <h2>Task Analysis</h2>
+                    
+                    <!-- Auto Mode Toggle -->
+                    <div class="auto-mode-section">
+                        <div>
+                            <div class="auto-mode-title">🤖 Auto-Analysis Mode</div>
+                            <div class="auto-mode-desc">AI will analyze your task and recommend the optimal model automatically</div>
                         </div>
-
-                        <!-- Input Section -->
-                        <div class="input-section">
-                            <label class="input-label" for="taskInput">Describe your task:</label>
-                            <textarea id="taskInput" placeholder="Example: I need to debug a React component that's not rendering properly. The component should fetch user data from an API and display it in a table format."></textarea>
-                            <div class="input-hint">💡 Be specific about your requirements for better model recommendations</div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4);">
-                            <button class="btn btn-primary btn-full" id="analyzeBtn">
-                                🔍 Analyze Task
-                            </button>
-                            <button class="btn btn-secondary" id="clearBtn">
-                                Clear
-                            </button>
-                        </div>
-
-                        <!-- Results Section -->
-                        <div id="results" style="display: none;">
-                            <h3>🎯 Recommended Model</h3>
-                            <div id="recommendation" class="card" style="background: hsl(var(--accent)); border-color: hsl(var(--foreground));">
-                                <!-- Results will be populated here -->
-                            </div>
-                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoMode" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
-                </div>
 
-                <div class="tab-content" id="models">
-                    <div class="card">
-                        <h2>Model Browser</h2>
-                        <p>Browse all available models and their specifications.</p>
-                        <div id="modelsList">
-                            <!-- Models will be populated here -->
-                        </div>
+                    <!-- Input Section -->
+                    <div class="input-section">
+                        <label class="input-label" for="taskInput">Describe your task:</label>
+                        <textarea id="taskInput" placeholder="Example: I need to debug a React component that's not rendering properly. The component should fetch user data from an API and display it in a table format."></textarea>
+                        <div class="input-hint">💡 Be specific about your requirements for better model recommendations</div>
                     </div>
-                </div>
 
-                <div class="tab-content" id="presets">
-                    <div class="card">
-                        <h2>Quick Presets</h2>
-                        <div class="presets-grid">
-                            <button class="preset-btn" data-preset="debugging">
-                                <div class="preset-icon">🐛</div>
-                                <div class="preset-name">Debugging</div>
-                                <div class="preset-desc">Code analysis and bug fixing</div>
-                            </button>
-                            <button class="preset-btn" data-preset="development">
-                                <div class="preset-icon">💻</div>
-                                <div class="preset-name">Development</div>
-                                <div class="preset-desc">General coding tasks</div>
-                            </button>
-                            <button class="preset-btn" data-preset="design">
-                                <div class="preset-icon">🎨</div>
-                                <div class="preset-name">Design</div>
-                                <div class="preset-desc">UI/UX and styling</div>
-                            </button>
-                            <button class="preset-btn" data-preset="documentation">
-                                <div class="preset-icon">📚</div>
-                                <div class="preset-name">Documentation</div>
-                                <div class="preset-desc">Writing and docs</div>
-                            </button>
-                            <button class="preset-btn" data-preset="planning">
-                                <div class="preset-icon">📋</div>
-                                <div class="preset-name">Planning</div>
-                                <div class="preset-desc">Architecture and strategy</div>
-                            </button>
-                            <button class="preset-btn" data-preset="optimization">
-                                <div class="preset-icon">⚡</div>
-                                <div class="preset-name">Optimization</div>
-                                <div class="preset-desc">Performance tuning</div>
-                            </button>
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4);">
+                        <button class="btn btn-primary btn-full" id="analyzeBtn">
+                            🔍 Analyze Task
+                        </button>
+                        <button class="btn btn-secondary" id="clearBtn">
+                            Clear
+                        </button>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results" style="display: none;">
+                        <h3>🎯 Recommended Model</h3>
+                        <div id="recommendation" class="card" style="background: hsl(var(--accent)); border-color: hsl(var(--foreground));">
+                            <!-- Results will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -859,7 +766,7 @@
 
     <script>
         // ========================================
-        // KODEXALABS WINDSURF MODEL SELECTOR v7.0
+        // KODEXALABS WINDSURF MODEL SELECTOR v8.0
         // Smart Scoring Engine - December 2025
         // ========================================
 
@@ -1427,33 +1334,10 @@
         // INITIALIZATION
         // ========================================
         document.addEventListener('DOMContentLoaded', function() {
-            initializeTabs();
             initializePresets();
             populateRecommendations();
             initializeAnalyzer();
         });
-
-        // Tab functionality
-        function initializeTabs() {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const targetTab = btn.dataset.tab;
-                    
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === targetTab) {
-                            content.classList.add('active');
-                        }
-                    });
-                });
-            });
-        }
 
         // Preset functionality
         function initializePresets() {
@@ -1477,8 +1361,6 @@
                     };
                     
                     taskInput.value = presetTexts[preset] || '';
-                    
-                    document.querySelector('[data-tab="analyzer"]').click();
                 });
             });
         }
@@ -1553,7 +1435,6 @@
         // Show model details (from sidebar click)
         function showModelDetails(model) {
             showRecommendation(model);
-            document.querySelector('[data-tab="analyzer"]').click();
             
             const taskInput = document.getElementById('taskInput');
             taskInput.value = `I need help with a task that would benefit from ${model.name}'s capabilities: ${model.description.toLowerCase()}`;
