@@ -636,6 +636,12 @@
             border: 1px solid hsl(var(--foreground));
         }
         
+        .category-reasoning {
+            background: hsl(var(--card));
+            color: hsl(var(--foreground));
+            border: 1px dashed hsl(var(--foreground));
+        }
+        
         /* ========================================
            STATUS INDICATORS - MONOCHROME
         ======================================== */
@@ -841,7 +847,7 @@
             <div class="sidebar">
                 <div class="recommendations-sidebar">
                     <div class="sidebar-title">
-                        🏆 Top Recommendations
+                        🏆 Top Models (Dec 2025)
                     </div>
                     <div id="compact-cards">
                         <!-- Recommendations will be populated here -->
@@ -853,64 +859,573 @@
 
     <script>
         // ========================================
-        // KODEXALABS WINDSURF MODEL SELECTOR
+        // KODEXALABS WINDSURF MODEL SELECTOR v7.0
+        // Smart Scoring Engine - December 2025
         // ========================================
-        
-        // Model Database
+
+        // ========================================
+        // MODEL DATABASE - December 2025 Lineup
+        // ========================================
         const models = [
             {
+                id: "claude-opus-4.5",
                 rank: 1,
-                name: "GPT-4 Turbo",
+                name: "Claude Opus 4.5",
+                category: "premium",
+                context: "200k",
+                speed: "Medium",
+                cost: "2x credits",
+                costTier: 3,
+                strengths: [
+                    "architecture-planning",
+                    "fuzzy-requirements",
+                    "cross-repo-strategy",
+                    "complex-reasoning",
+                    "long-context",
+                    "broad-guidance"
+                ],
+                description: "Most capable model in Windsurf. Best for fuzzy planning, architecture design, and cross-repo strategy. Currently at Sonnet pricing (2x) instead of 20x.",
+                docsUrl: "https://docs.windsurf.com/windsurf/models",
+                guideUrl: "https://windsurf.com/changelog",
+                communityUrl: "https://www.reddit.com/r/windsurf/comments/1p5qcus/claude_opus_45_in_windsurf_for_2x_credits_instead/"
+            },
+            {
+                id: "swe-1.5",
+                rank: 2,
+                name: "SWE-1.5",
                 category: "workhorse",
                 context: "128k",
-                speed: "Fast",
-                cost: "Premium",
-                strengths: ["Complex reasoning", "Code generation", "Analysis"],
-                description: "Best overall model for most tasks"
+                speed: "Ultra Fast (950 tok/s)",
+                cost: "Standard",
+                costTier: 2,
+                strengths: [
+                    "multi-file-refactor",
+                    "deep-debugging",
+                    "agentic-workflows",
+                    "codebase-exploration",
+                    "full-stack-apps",
+                    "config-editing",
+                    "flow-window-speed"
+                ],
+                description: "Cognition's flagship agentic model. Near Claude 4.5-level performance at 13x the speed. Kubernetes manifest edits in ~5s vs ~20s. Daily driver for Cognition engineers.",
+                docsUrl: "https://docs.windsurf.com/windsurf/models",
+                guideUrl: "https://cognition.ai/blog/swe-1-5",
+                communityUrl: "https://www.reddit.com/r/windsurf/comments/1pcafy4/do_you_choose_opus45_or_swe15_sonnet45/"
             },
             {
-                rank: 2,
-                name: "Claude 3.5 Sonnet",
-                category: "balanced",
-                context: "200k",
-                speed: "Fast",
-                cost: "Premium",
-                strengths: ["Long context", "Writing", "Analysis"],
-                description: "Excellent for long-form content"
-            },
-            {
+                id: "gpt-5.1-codex-max",
                 rank: 3,
-                name: "GPT-4o",
-                category: "speed",
+                name: "GPT-5.1-Codex Max",
+                category: "reasoning",
                 context: "128k",
-                speed: "Very Fast",
-                cost: "Premium",
-                strengths: ["Speed", "Multimodal", "Real-time"],
-                description: "Fastest premium model"
+                speed: "Variable (Low/Med/High)",
+                cost: "Low tier FREE",
+                costTier: 2,
+                strengths: [
+                    "precise-algorithms",
+                    "explicit-instructions",
+                    "structured-tasks",
+                    "reasoning-depth",
+                    "code-generation",
+                    "tight-scope"
+                ],
+                description: "OpenAI's agentic coding model with 3 reasoning tiers. Low tier is FREE for paid users (limited time). Best for precise algorithms and tightly scoped tasks with explicit instructions.",
+                docsUrl: "https://docs.windsurf.com/windsurf/models",
+                guideUrl: "https://windsurf.com/changelog",
+                communityUrl: "https://www.reddit.com/r/windsurf/comments/1o9b5b8/gpt5_codex_vs_claude_sonnet_45/"
             },
             {
+                id: "claude-3.7-sonnet-thinking",
                 rank: 4,
-                name: "Claude 3 Haiku",
-                category: "budget",
-                context: "200k",
-                speed: "Very Fast",
-                cost: "Budget",
-                strengths: ["Speed", "Cost efficiency", "Long context"],
-                description: "Best value for money"
+                name: "Claude 3.7 Sonnet (Thinking)",
+                category: "planning",
+                context: "1M",
+                speed: "Medium",
+                cost: "1.5x credits",
+                costTier: 2,
+                strengths: [
+                    "deep-reasoning",
+                    "complex-tasks",
+                    "architecture-planning",
+                    "long-context",
+                    "step-by-step",
+                    "edge-cases"
+                ],
+                description: "Extended thinking mode for complex large tasks. 1M token context window. Best for deep reasoning, planning complex features, and handling edge cases systematically.",
+                docsUrl: "https://docs.windsurf.com/windsurf/models",
+                guideUrl: "https://windsurf.com/changelog",
+                communityUrl: "https://www.reddit.com/r/windsurf/comments/1le42im/what_are_your_thoughts_on_swe1_for_planning_and/"
             },
             {
+                id: "swe-1-lite",
                 rank: 5,
-                name: "Llama 3.1 70B",
+                name: "SWE-1-lite",
                 category: "free",
                 context: "128k",
                 speed: "Fast",
-                cost: "Free",
-                strengths: ["Open source", "Privacy", "No cost"],
-                description: "Best free model option"
+                cost: "FREE (unlimited)",
+                costTier: 1,
+                strengths: [
+                    "budget-friendly",
+                    "unlimited-use",
+                    "general-coding",
+                    "quick-tasks",
+                    "learning",
+                    "prototyping"
+                ],
+                description: "Replaced Cascade Base with far better quality. Unlimited free use for all plans. Best fallback for cost-sensitive workflows or when credits are low.",
+                docsUrl: "https://docs.windsurf.com/windsurf/models",
+                guideUrl: "https://windsurf.com/changelog",
+                communityUrl: "https://www.reddit.com/r/windsurf/"
             }
         ];
 
-        // Initialize the app
+        // ========================================
+        // INTENT FEATURE EXTRACTION
+        // ========================================
+        function analyzeTaskFeatures(task) {
+            const t = task.toLowerCase();
+            
+            // Feature detection with weighted keyword groups
+            const features = {
+                // Planning & Architecture
+                planning: 0,
+                architecture: 0,
+                fuzzyRequirements: 0,
+                crossRepo: 0,
+                
+                // Debugging & Fixing
+                debugging: 0,
+                errorFixing: 0,
+                
+                // Refactoring & Multi-file
+                refactoring: 0,
+                multiFile: 0,
+                largeScope: 0,
+                
+                // Algorithms & Precision
+                algorithmic: 0,
+                preciseInstructions: 0,
+                tightScope: 0,
+                
+                // Speed & Cost
+                speedPriority: 0,
+                costSensitive: 0,
+                
+                // Complexity
+                complexTask: 0,
+                simpleTask: 0,
+                
+                // Context needs
+                longContext: 0,
+                
+                // Agentic workflows
+                agenticWorkflow: 0
+            };
+
+            // Planning & Architecture keywords
+            const planningKeywords = ['plan', 'architect', 'design', 'strategy', 'roadmap', 'structure', 'organize', 'layout', 'blueprint'];
+            const architectureKeywords = ['architecture', 'system design', 'microservice', 'monolith', 'database schema', 'api design', 'infrastructure'];
+            const fuzzyKeywords = ['not sure', 'maybe', 'could be', 'might', 'explore', 'brainstorm', 'ideas', 'suggestions', 'help me think', 'what if', 'how should'];
+            const crossRepoKeywords = ['multiple repo', 'cross-repo', 'monorepo', 'workspace', 'several project', 'different codebases'];
+
+            // Debugging keywords
+            const debugKeywords = ['debug', 'bug', 'error', 'fix', 'broken', 'not working', 'crash', 'issue', 'problem', 'failing', 'exception', 'stack trace'];
+            const errorKeywords = ['error', 'exception', 'undefined', 'null', 'type error', 'syntax error', 'runtime', 'compile'];
+
+            // Refactoring keywords
+            const refactorKeywords = ['refactor', 'restructure', 'reorganize', 'clean up', 'improve code', 'modernize', 'migrate', 'upgrade', 'rewrite'];
+            const multiFileKeywords = ['multiple files', 'several files', 'across files', 'many components', 'entire codebase', 'whole project', 'all files'];
+            const largeScopeKeywords = ['large', 'big', 'entire', 'whole', 'complete', 'full', 'comprehensive', 'end-to-end', 'full-stack'];
+
+            // Algorithm keywords
+            const algorithmKeywords = ['algorithm', 'optimize', 'performance', 'complexity', 'efficient', 'data structure', 'sort', 'search', 'graph', 'tree', 'dynamic programming'];
+            const preciseKeywords = ['exactly', 'precisely', 'specific', 'strict', 'must', 'requirement', 'specification', 'follow this', 'according to'];
+            const tightScopeKeywords = ['single file', 'one function', 'this method', 'just this', 'only', 'small change', 'quick fix'];
+
+            // Speed & Cost keywords
+            const speedKeywords = ['fast', 'quick', 'rapid', 'immediately', 'asap', 'urgent', 'speed'];
+            const costKeywords = ['budget', 'cheap', 'free', 'save credits', 'cost', 'economical', 'affordable', 'credits'];
+
+            // Complexity keywords
+            const complexKeywords = ['complex', 'complicated', 'intricate', 'advanced', 'sophisticated', 'challenging', 'difficult'];
+            const simpleKeywords = ['simple', 'basic', 'easy', 'straightforward', 'trivial', 'quick'];
+
+            // Long context keywords
+            const longContextKeywords = ['long file', 'large file', 'entire codebase', 'many files', 'documentation', 'analyze all'];
+
+            // Agentic workflow keywords
+            const agenticKeywords = ['automate', 'workflow', 'pipeline', 'continuous', 'agent', 'autonomous', 'multi-step', 'chain'];
+
+            // Score each feature category
+            const scoreKeywords = (keywords, weight = 1) => {
+                return keywords.filter(kw => t.includes(kw)).length * weight;
+            };
+
+            features.planning = scoreKeywords(planningKeywords, 2);
+            features.architecture = scoreKeywords(architectureKeywords, 3);
+            features.fuzzyRequirements = scoreKeywords(fuzzyKeywords, 2);
+            features.crossRepo = scoreKeywords(crossRepoKeywords, 3);
+            
+            features.debugging = scoreKeywords(debugKeywords, 2);
+            features.errorFixing = scoreKeywords(errorKeywords, 2);
+            
+            features.refactoring = scoreKeywords(refactorKeywords, 2);
+            features.multiFile = scoreKeywords(multiFileKeywords, 3);
+            features.largeScope = scoreKeywords(largeScopeKeywords, 2);
+            
+            features.algorithmic = scoreKeywords(algorithmKeywords, 3);
+            features.preciseInstructions = scoreKeywords(preciseKeywords, 2);
+            features.tightScope = scoreKeywords(tightScopeKeywords, 2);
+            
+            features.speedPriority = scoreKeywords(speedKeywords, 2);
+            features.costSensitive = scoreKeywords(costKeywords, 3);
+            
+            features.complexTask = scoreKeywords(complexKeywords, 2);
+            features.simpleTask = scoreKeywords(simpleKeywords, 1);
+            
+            features.longContext = scoreKeywords(longContextKeywords, 2);
+            features.agenticWorkflow = scoreKeywords(agenticKeywords, 2);
+
+            // Derive composite scores
+            features.needsPlanning = features.planning + features.architecture + features.fuzzyRequirements + features.crossRepo;
+            features.needsDebugging = features.debugging + features.errorFixing;
+            features.needsRefactoring = features.refactoring + features.multiFile + features.largeScope + features.agenticWorkflow;
+            features.needsPrecision = features.algorithmic + features.preciseInstructions + features.tightScope;
+            features.needsBudget = features.costSensitive + features.simpleTask;
+
+            return features;
+        }
+
+        // ========================================
+        // MODEL SCORING ENGINE
+        // ========================================
+        function scoreModelForTask(model, features) {
+            let score = 0;
+            const strengths = model.strengths;
+
+            // Claude Opus 4.5 scoring - best for planning & fuzzy requirements
+            if (model.id === 'claude-opus-4.5') {
+                score += features.needsPlanning * 5;
+                score += features.fuzzyRequirements * 6;
+                score += features.architecture * 5;
+                score += features.crossRepo * 6;
+                score += features.complexTask * 3;
+                score += features.longContext * 3;
+                // Penalty for simple/budget tasks
+                score -= features.simpleTask * 2;
+                score -= features.costSensitive * 3;
+                score -= features.speedPriority * 2;
+            }
+
+            // SWE-1.5 scoring - best for debugging, refactoring, agentic workflows
+            if (model.id === 'swe-1.5') {
+                score += features.needsDebugging * 6;
+                score += features.needsRefactoring * 6;
+                score += features.multiFile * 5;
+                score += features.agenticWorkflow * 6;
+                score += features.largeScope * 4;
+                score += features.speedPriority * 4; // Ultra fast!
+                // Good general-purpose score
+                score += 5; // Base bonus as daily driver
+            }
+
+            // GPT-5.1-Codex Max scoring - best for precise algorithms
+            if (model.id === 'gpt-5.1-codex-max') {
+                score += features.needsPrecision * 6;
+                score += features.algorithmic * 5;
+                score += features.preciseInstructions * 5;
+                score += features.tightScope * 4;
+                // Good for structured tasks
+                score += features.complexTask * 2;
+                // Free tier bonus for cost-sensitive
+                score += features.costSensitive * 2;
+            }
+
+            // Claude 3.7 Sonnet (Thinking) scoring - deep reasoning
+            if (model.id === 'claude-3.7-sonnet-thinking') {
+                score += features.complexTask * 5;
+                score += features.needsPlanning * 4;
+                score += features.longContext * 5;
+                score += features.architecture * 3;
+                // Good for step-by-step reasoning
+                score += features.needsPrecision * 2;
+            }
+
+            // SWE-1-lite scoring - budget fallback
+            if (model.id === 'swe-1-lite') {
+                score += features.needsBudget * 8;
+                score += features.costSensitive * 6;
+                score += features.simpleTask * 4;
+                // Always viable as fallback
+                score += 2;
+            }
+
+            // Cost tier adjustment
+            if (features.costSensitive > 0) {
+                score -= (model.costTier - 1) * 3;
+            }
+
+            return Math.max(0, score);
+        }
+
+        // ========================================
+        // RANKED MODEL SELECTION
+        // ========================================
+        function getRankedModelsForTask(task) {
+            const features = analyzeTaskFeatures(task);
+            
+            // Score all models
+            const scoredModels = models.map(model => ({
+                model: model,
+                score: scoreModelForTask(model, features),
+                features: features
+            }));
+
+            // Sort by score descending
+            scoredModels.sort((a, b) => b.score - a.score);
+
+            // Generate reasoning for primary choice
+            const primary = scoredModels[0];
+            const reasoning = generateReasoning(primary.model, features);
+
+            return {
+                primary: primary.model,
+                fallbackB: scoredModels[1]?.model || null,
+                fallbackC: scoredModels.find(s => s.model.costTier === 1)?.model || scoredModels[scoredModels.length - 1]?.model,
+                reasoning: reasoning,
+                features: features,
+                allScored: scoredModels
+            };
+        }
+
+        // ========================================
+        // REASONING GENERATOR
+        // ========================================
+        function generateReasoning(model, features) {
+            const reasons = [];
+
+            if (model.id === 'claude-opus-4.5') {
+                if (features.fuzzyRequirements > 0) reasons.push("fuzzy/exploratory requirements");
+                if (features.architecture > 0) reasons.push("architecture design");
+                if (features.crossRepo > 0) reasons.push("cross-repo strategy");
+                if (features.needsPlanning > 0) reasons.push("planning and broad guidance");
+            }
+
+            if (model.id === 'swe-1.5') {
+                if (features.needsDebugging > 0) reasons.push("deep debugging");
+                if (features.needsRefactoring > 0) reasons.push("multi-file refactoring");
+                if (features.agenticWorkflow > 0) reasons.push("agentic workflow");
+                if (features.speedPriority > 0) reasons.push("speed priority (950 tok/s)");
+                if (reasons.length === 0) reasons.push("general coding (daily driver)");
+            }
+
+            if (model.id === 'gpt-5.1-codex-max') {
+                if (features.algorithmic > 0) reasons.push("algorithmic precision");
+                if (features.preciseInstructions > 0) reasons.push("explicit structured instructions");
+                if (features.tightScope > 0) reasons.push("tightly scoped task");
+            }
+
+            if (model.id === 'claude-3.7-sonnet-thinking') {
+                if (features.complexTask > 0) reasons.push("complex reasoning required");
+                if (features.longContext > 0) reasons.push("long context (1M tokens)");
+                if (features.needsPlanning > 0) reasons.push("step-by-step planning");
+            }
+
+            if (model.id === 'swe-1-lite') {
+                if (features.costSensitive > 0) reasons.push("cost-sensitive (FREE unlimited)");
+                if (features.simpleTask > 0) reasons.push("simple/quick task");
+                reasons.push("budget-friendly fallback");
+            }
+
+            return reasons.length > 0 
+                ? `Recommended because your task involves ${reasons.slice(0, 3).join(', ')}.`
+                : `Recommended as a strong general-purpose choice for this task.`;
+        }
+
+        // ========================================
+        // LEGACY WRAPPER (for compatibility)
+        // ========================================
+        function analyzeTask(task) {
+            const result = getRankedModelsForTask(task);
+            // Return primary model for backward compatibility
+            return result.primary;
+        }
+
+        // ========================================
+        // ENHANCED RECOMMENDATION DISPLAY
+        // ========================================
+        function showRecommendationWithFallbacks(task) {
+            const result = getRankedModelsForTask(task);
+            const { primary, fallbackB, fallbackC, reasoning } = result;
+            
+            const results = document.getElementById('results');
+            const recommendation = document.getElementById('recommendation');
+
+            // Build external links HTML
+            const buildLinks = (model) => {
+                let links = '';
+                if (model.docsUrl) {
+                    links += `<a href="${model.docsUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📄 Docs</a>`;
+                }
+                if (model.guideUrl) {
+                    links += `<a href="${model.guideUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📖 Guide</a>`;
+                }
+                if (model.communityUrl) {
+                    links += `<a href="${model.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
+                }
+                return links;
+            };
+
+            // Build fallback card HTML
+            const buildFallbackCard = (model, label) => {
+                if (!model) return '';
+                return `
+                    <div style="background: hsl(var(--secondary)); border: 1px solid hsl(var(--border)); border-radius: var(--radius-md); padding: var(--space-3); cursor: pointer;" onclick="showModelDetails(models.find(m => m.id === '${model.id}'))">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1);">
+                            <span style="font-size: 0.7rem; color: hsl(var(--text-muted)); text-transform: uppercase; letter-spacing: 0.05em;">${label}</span>
+                            <span style="font-size: 0.75rem; color: hsl(var(--text-secondary));">${model.cost}</span>
+                        </div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.9rem;">${model.name}</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--text-secondary)); margin-top: var(--space-1);">${model.speed}</div>
+                    </div>
+                `;
+            };
+
+            recommendation.innerHTML = `
+                <!-- Primary Recommendation -->
+                <div style="margin-bottom: var(--space-4);">
+                    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2);">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); background: hsl(var(--secondary)); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); border: 2px solid hsl(var(--foreground));">A</div>
+                        <div>
+                            <h3 style="margin-bottom: var(--space-1); font-size: 1.1rem;">${primary.name}</h3>
+                            <span class="category-indicator category-${primary.category}">${primary.category}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Reasoning -->
+                    <p style="margin-bottom: var(--space-3); color: hsl(var(--text-secondary)); font-size: 0.9rem; font-style: italic; border-left: 2px solid hsl(var(--border)); padding-left: var(--space-3);">
+                        💡 ${reasoning}
+                    </p>
+                    
+                    <p style="margin-bottom: var(--space-3); color: hsl(var(--text-secondary)); font-size: 0.85rem;">${primary.description}</p>
+                    
+                    <!-- Specs Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);">
+                        <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                            <div style="font-size: 0.75rem; color: hsl(var(--text-muted));">Context</div>
+                            <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.9rem;">${primary.context}</div>
+                        </div>
+                        <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                            <div style="font-size: 0.75rem; color: hsl(var(--text-muted));">Speed</div>
+                            <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.9rem;">${primary.speed}</div>
+                        </div>
+                        <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                            <div style="font-size: 0.75rem; color: hsl(var(--text-muted));">Cost</div>
+                            <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.9rem;">${primary.cost}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Strengths -->
+                    <div style="margin-bottom: var(--space-3);">
+                        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: var(--space-2); color: hsl(var(--foreground));">Strengths:</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-1);">
+                            ${primary.strengths.slice(0, 5).map(strength => `
+                                <span class="status-indicator status-success" style="font-size: 0.7rem;">${strength.replace(/-/g, ' ')}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- External Links -->
+                    <div style="margin-bottom: var(--space-3);">
+                        ${buildLinks(primary)}
+                    </div>
+                    
+                    <button class="btn btn-primary btn-full" onclick="selectModel('${primary.name}')">
+                        Select ${primary.name}
+                    </button>
+                </div>
+                
+                <!-- Fallback Options -->
+                <div style="border-top: 1px solid hsl(var(--border)); padding-top: var(--space-3);">
+                    <div style="font-size: 0.8rem; font-weight: 600; color: hsl(var(--text-muted)); margin-bottom: var(--space-2); text-transform: uppercase; letter-spacing: 0.05em;">Alternative Options</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+                        ${buildFallbackCard(fallbackB, 'Fallback B')}
+                        ${buildFallbackCard(fallbackC, 'Budget C')}
+                    </div>
+                </div>
+            `;
+            
+            results.style.display = 'block';
+        }
+
+        // ========================================
+        // LEGACY showRecommendation (for sidebar clicks)
+        // ========================================
+        function showRecommendation(model) {
+            const results = document.getElementById('results');
+            const recommendation = document.getElementById('recommendation');
+            
+            // Build external links HTML
+            const buildLinks = (m) => {
+                let links = '';
+                if (m.docsUrl) {
+                    links += `<a href="${m.docsUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📄 Docs</a>`;
+                }
+                if (m.guideUrl) {
+                    links += `<a href="${m.guideUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📖 Guide</a>`;
+                }
+                if (m.communityUrl) {
+                    links += `<a href="${m.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
+                }
+                return links;
+            };
+            
+            recommendation.innerHTML = `
+                <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
+                    <div style="font-size: 2rem; font-weight: 800; color: hsl(var(--foreground));">${model.rank}</div>
+                    <div>
+                        <h3 style="margin-bottom: var(--space-1);">${model.name}</h3>
+                        <span class="category-indicator category-${model.category}">${model.category}</span>
+                    </div>
+                </div>
+                <p style="margin-bottom: var(--space-3); color: hsl(var(--text-secondary));">${model.description}</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);">
+                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Context</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.context}</div>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Speed</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.speed}</div>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Cost</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.cost}</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: var(--space-3);">
+                    <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-2); color: hsl(var(--foreground));">Strengths:</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${model.strengths.map(strength => `
+                            <span class="status-indicator status-success">${strength.replace(/-/g, ' ')}</span>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-bottom: var(--space-3);">
+                    ${buildLinks(model)}
+                </div>
+                <button class="btn btn-primary btn-full" onclick="selectModel('${model.name}')">
+                    Select This Model
+                </button>
+            `;
+            
+            results.style.display = 'block';
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
         document.addEventListener('DOMContentLoaded', function() {
             initializeTabs();
             initializePresets();
@@ -927,11 +1442,9 @@
                 btn.addEventListener('click', () => {
                     const targetTab = btn.dataset.tab;
                     
-                    // Update buttons
                     tabBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
-                    // Update content
                     tabContents.forEach(content => {
                         content.classList.remove('active');
                         if (content.id === targetTab) {
@@ -950,24 +1463,21 @@
                 btn.addEventListener('click', () => {
                     const preset = btn.dataset.preset;
                     
-                    // Update active state
                     presetBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
-                    // Update task input with preset
                     const taskInput = document.getElementById('taskInput');
                     const presetTexts = {
-                        debugging: "I need to debug a code issue. There's an error in my application that I can't figure out.",
-                        development: "I need help with a development task. Please assist me with coding.",
-                        design: "I need help with UI/UX design. I want to improve the user interface.",
-                        documentation: "I need to write documentation. Please help me create clear and comprehensive docs.",
-                        planning: "I need to plan a project. Help me architect the solution.",
-                        optimization: "I need to optimize performance. Help me improve speed and efficiency."
+                        debugging: "I need to debug a complex issue across multiple files. There's an error in my application that involves async state management and I can't figure out the root cause.",
+                        development: "I need help building a full-stack feature with React frontend and Node.js backend. This involves creating new API endpoints and UI components.",
+                        design: "I need help with UI/UX design. I want to improve the user interface with better component architecture and styling patterns.",
+                        documentation: "I need to write comprehensive documentation for our API. Please help me create clear and thorough docs with examples.",
+                        planning: "I need to plan and architect a new microservices system. Help me design the overall structure, data flow, and service boundaries.",
+                        optimization: "I need to optimize performance across our codebase. Help me identify bottlenecks and implement efficient algorithms."
                     };
                     
                     taskInput.value = presetTexts[preset] || '';
                     
-                    // Switch to analyzer tab
                     document.querySelector('[data-tab="analyzer"]').click();
                 });
             });
@@ -1007,13 +1517,12 @@
             });
         }
 
-        // Initialize analyzer
+        // Initialize analyzer with smart scoring
         function initializeAnalyzer() {
             const analyzeBtn = document.getElementById('analyzeBtn');
             const clearBtn = document.getElementById('clearBtn');
             const taskInput = document.getElementById('taskInput');
             const results = document.getElementById('results');
-            const recommendation = document.getElementById('recommendation');
 
             analyzeBtn.addEventListener('click', () => {
                 const task = taskInput.value.trim();
@@ -1023,17 +1532,16 @@
                     return;
                 }
 
-                // Simulate analysis
                 analyzeBtn.textContent = '🔄 Analyzing...';
                 analyzeBtn.disabled = true;
 
                 setTimeout(() => {
-                    const recommendedModel = analyzeTask(task);
-                    showRecommendation(recommendedModel);
+                    // Use enhanced recommendation with fallbacks
+                    showRecommendationWithFallbacks(task);
                     
                     analyzeBtn.textContent = '🔍 Analyze Task';
                     analyzeBtn.disabled = false;
-                }, 1500);
+                }, 800);
             });
 
             clearBtn.addEventListener('click', () => {
@@ -1042,83 +1550,18 @@
             });
         }
 
-        // Analyze task and recommend model
-        function analyzeTask(task) {
-            const taskLower = task.toLowerCase();
-            
-            // Simple keyword-based analysis
-            if (taskLower.includes('debug') || taskLower.includes('error') || taskLower.includes('bug')) {
-                return models[0]; // GPT-4 Turbo for debugging
-            } else if (taskLower.includes('long') || taskLower.includes('document') || taskLower.includes('write')) {
-                return models[1]; // Claude 3.5 Sonnet for long content
-            } else if (taskLower.includes('fast') || taskLower.includes('quick') || taskLower.includes('real-time')) {
-                return models[2]; // GPT-4o for speed
-            } else if (taskLower.includes('budget') || taskLower.includes('cheap') || taskLower.includes('save money')) {
-                return models[3]; // Claude 3 Haiku for budget
-            } else if (taskLower.includes('free') || taskLower.includes('open source')) {
-                return models[4]; // Llama 3.1 for free option
-            } else {
-                return models[0]; // Default to GPT-4 Turbo
-            }
-        }
-
-        // Show recommendation
-        function showRecommendation(model) {
-            const results = document.getElementById('results');
-            const recommendation = document.getElementById('recommendation');
-            
-            recommendation.innerHTML = `
-                <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
-                    <div style="font-size: 2rem; font-weight: 800; color: hsl(var(--foreground));">${model.rank}</div>
-                    <div>
-                        <h3 style="margin-bottom: var(--space-1);">${model.name}</h3>
-                        <span class="category-indicator category-${model.category}">${model.category}</span>
-                    </div>
-                </div>
-                <p style="margin-bottom: var(--space-3); color: hsl(var(--text-secondary));">${model.description}</p>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);">
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Context</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.context}</div>
-                    </div>
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Speed</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.speed}</div>
-                    </div>
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Cost</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.cost}</div>
-                    </div>
-                </div>
-                <div style="margin-bottom: var(--space-3);">
-                    <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-2); color: hsl(var(--foreground));">Strengths:</div>
-                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-                        ${model.strengths.map(strength => `
-                            <span class="status-indicator status-success">${strength}</span>
-                        `).join('')}
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-full" onclick="selectModel('${model.name}')">
-                    Select This Model
-                </button>
-            `;
-            
-            results.style.display = 'block';
-        }
-
-        // Show model details
+        // Show model details (from sidebar click)
         function showModelDetails(model) {
             showRecommendation(model);
             document.querySelector('[data-tab="analyzer"]').click();
             
-            // Update the input with a relevant task
             const taskInput = document.getElementById('taskInput');
             taskInput.value = `I need help with a task that would benefit from ${model.name}'s capabilities: ${model.description.toLowerCase()}`;
         }
 
         // Select model
         function selectModel(modelName) {
-            alert(`Model "${modelName}" has been selected for your Windsurf IDE session.`);
+            alert(`Model "${modelName}" has been selected for your Windsurf IDE session.\n\nIn the actual Windsurf IDE, this would switch your active model.`);
         }
     </script>
 </body>
