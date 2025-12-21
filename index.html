@@ -2151,6 +2151,12 @@
         // ENHANCED SCORING WITH BUDGET MODE
         // ========================================
         
+        // Budget Mode scoring modifiers:
+        // - Cost Tier 1 (Free): +10 points (prioritize free models)
+        // - Cost Tier 2 (Low Cost): +5 points (slight preference for affordable)
+        // - Cost Tier 3 (Premium): -5 points (penalize expensive models)
+        // When Budget Mode is OFF, returns base score without modifications
+        
         function scoreModelForTaskWithBudget(model, features) {
             const baseScore = scoreModelForTask(model, features);
             const budgetMode = document.getElementById('budgetMode').checked;
@@ -2170,9 +2176,6 @@
                     finalScore = baseScore - 5;   // Premium get -5
                     break;
             }
-            
-            // Temporary: Log budget mode scoring for testing
-            console.log(`Budget Mode: ${model.name} (${model.costTier}) - Base: ${baseScore} → Final: ${finalScore}`);
             
             return finalScore;
         }
