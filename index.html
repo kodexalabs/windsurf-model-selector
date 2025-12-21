@@ -195,6 +195,7 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             border-bottom: 1px solid hsl(var(--border));
+            position: relative;
         }
         
         /* Mobile scroll indicators */
@@ -2160,12 +2161,13 @@
         // ========================================
         
         function exportAsMarkdown() {
-            const task = document.getElementById('taskInput').value;
-            const ranked = getRankedModelsForTask(task);
-            const features = analyzeTaskFeatures(task);
-            const timestamp = new Date().toISOString();
-            
-            const markdown = `# Windsurf Model Recommendation
+            try {
+                const task = document.getElementById('taskInput').value;
+                const ranked = getRankedModelsForTask(task);
+                const features = analyzeTaskFeatures(task);
+                const timestamp = new Date().toISOString();
+                
+                const markdown = `# Windsurf Model Recommendation
 **Date:** ${new Date(timestamp).toLocaleString()}
 
 ## Task
@@ -2189,16 +2191,51 @@ ${task}
 ## Detected Features
 ${Object.entries(features).filter(([k, v]) => v > 0).map(([k]) => `- ${k}`).join('\n')}
 `;
-            
-            const blob = new Blob([markdown], { type: 'text/markdown' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `windsurf-recommendation-${timestamp.replace(/[:.]/g, '-')}.md`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showToast('📄 Exported as Markdown');
+                
+                // Check for Blob support
+                if (typeof Blob === 'undefined') {
+                    throw new Error('Blob API not supported in this browser');
+                }
+                
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `windsurf-recommendation-${timestamp.replace(/[:.]/g, '-')}.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showToast('📄 Exported as Markdown');
+            } catch (error) {
+                console.error('Export failed:', error);
+                showToast('❌ Export failed. Try a different browser.');
+                
+                // Fallback: copy to clipboard
+                try {
+                    const task = document.getElementById('taskInput').value;
+                    const ranked = getRankedModelsForTask(task);
+                    const features = analyzeTaskFeatures(task);
+                    const timestamp = new Date().toISOString();
+                    
+                    const markdown = `# Windsurf Model Recommendation
+**Date:** ${new Date(timestamp).toLocaleString()}
+
+## Task
+${task}
+
+## Primary Model: ${ranked.primary.name}
+${generateReasoning(ranked.primary, features)}
+
+## Features: ${Object.entries(features).filter(([k, v]) => v > 0).map(([k]) => k).join(', ')}`;
+                    
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(markdown);
+                        showToast('📋 Copied to clipboard instead');
+                    }
+                } catch (fallbackError) {
+                    showToast('❌ Export and clipboard failed');
+                }
+            }
         }
         
         // ========================================
@@ -2258,16 +2295,33 @@ ${Object.entries(features).filter(([k, v]) => v > 0).map(([k]) => `- ${k}`).join
                     return;
                 }
                 
-                const optimized = PromptOptimizer.optimize(currentText);
-                taskInput.value = optimized;
+                // Show loading state
+                const originalText = optimizeBtn.textContent;
+                optimizeBtn.disabled = true;
+                optimizeBtn.textContent = '⏳ Optimizing...';
                 
-                // Highlight animation
-                taskInput.style.animation = 'pulse 0.5s';
+                // Use setTimeout to allow UI to update before processing
                 setTimeout(() => {
-                    taskInput.style.animation = '';
-                }, 500);
-                
-                showToast('✅ Prompt optimized for Windsurf');
+                    try {
+                        const optimized = PromptOptimizer.optimize(currentText);
+                        taskInput.value = optimized;
+                        
+                        // Highlight animation
+                        taskInput.style.animation = 'pulse 0.5s';
+                        setTimeout(() => {
+                            taskInput.style.animation = '';
+                        }, 500);
+                        
+                        showToast('✅ Prompt optimized for Windsurf');
+                    } catch (error) {
+                        console.error('Optimization failed:', error);
+                        showToast('❌ Optimization failed');
+                    } finally {
+                        // Reset button
+                        optimizeBtn.disabled = false;
+                        optimizeBtn.textContent = originalText;
+                    }
+                }, 100);
             });
         }
         
@@ -2293,11 +2347,19 @@ ${Object.entries(features).filter(([k, v]) => v > 0).map(([k]) => `- ${k}`).join
                 showToast('History cleared');
             });
             
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
+            // Close dropdown when clicking outside (supports both mouse and touch)
+            const closeDropdown = (e) => {
                 if (!e.target.closest('.history-dropdown')) {
                     menu.classList.remove('show');
                 }
+            };
+            
+            document.addEventListener('click', closeDropdown);
+            document.addEventListener('touchstart', closeDropdown);
+            
+            // Prevent touch events on menu from bubbling up
+            menu.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
             });
         }
         
