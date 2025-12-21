@@ -1758,22 +1758,101 @@
             // Build external links HTML
             const buildLinks = (m) => {
                 let links = '';
-        }
-        if (model.communityUrl) {
-            links += `<a href="${model.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
+                if (m.docsUrl) {
+                    links += `<a href="${m.docsUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📄 Docs</a>`;
+                }
+                if (m.guideUrl) {
+                    links += `<a href="${m.guideUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📖 Guide</a>`;
+                }
+                if (m.communityUrl) {
+                    links += `<a href="${m.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
+                }
+                return links;
+            };
+            
+            // Build fallback card HTML
+            const buildFallbackCard = (fallbackModel, label) => {
+                if (!fallbackModel) return '';
+                return `
+                    <div style="background: hsl(var(--secondary)); border: 1px solid hsl(var(--border)); border-radius: var(--radius-md); padding: var(--space-3); cursor: pointer;" onclick="selectModel('${fallbackModel.name}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1);">
+                            <span style="font-size: 0.7rem; color: hsl(var(--text-muted)); text-transform: uppercase; letter-spacing: 0.05em;">${label}</span>
+                            <span style="font-size: 0.75rem; color: hsl(var(--text-secondary));">${fallbackModel.cost}</span>
+                        </div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground)); font-size: 0.9rem;">${fallbackModel.name}</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--text-secondary)); margin-top: var(--space-1);">${fallbackModel.speed}</div>
+                    </div>
+                `;
+            };
+
+            recommendation.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
+                    <div>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: var(--space-1);">
+                            🎯 ${model.name}
+                        </div>
+                        <div style="font-size: 0.9rem; color: hsl(var(--text-secondary)); margin-bottom: var(--space-2);">
+                            ${model.description}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="category-indicator category-${model.category}" style="margin-bottom: var(--space-1);">
+                            ${model.category.toUpperCase()}
+                        </div>
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">
+                            Rank #${model.rank}
+                        </div>
+                    </div>
+                </div>
                 
-                history.unshift(entry);
-                if (history.length > 5) history.pop();
-                this.set('windsurfSelector_history', history);
-            }
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-3);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted)); margin-bottom: 2px;">Context</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.context}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted)); margin-bottom: 2px;">Speed</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.speed}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted)); margin-bottom: 2px;">Cost</div>
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.cost}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: var(--space-3);">
+                    <div style="font-size: 0.9rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: var(--space-1);">
+                        💡 Why this model?
+                    </div>
+                    <div style="font-size: 0.85rem; color: hsl(var(--text-secondary)); line-height: 1.4;">
+                        ${generateReasoning(model, analyzeTaskFeatures(document.getElementById('taskInput').value))}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: var(--space-3);">
+                    <div style="font-size: 0.9rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: var(--space-2);">
+                        🔄 Alternative Options
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+                        ${buildFallbackCard(models.find(m => m.rank === 2), 'Fallback B')}
+                        ${buildFallbackCard(models.find(m => m.costTier === 1), 'Budget C')}
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2);">
+                    <button class="btn btn-outline" onclick="toggleComparison()" style="flex: 0 0 auto;">
+                        ⚖️ Compare Top 3
+                    </button>
+                    <button class="btn btn-outline" onclick="exportAsMarkdown()" style="flex: 0 0 auto;">
+                        📄 Export
+                    </button>
+                    <button class="btn btn-primary" onclick="selectModel('${model.name}')" style="flex: 1;">
+                        Select This Model
+                    </button>
+                </div>
+            `;
             
-            static getHistory() {
-                return this.get('windsurfSelector_history', []);
-            }
-            
-            static clearHistory() {
-                localStorage.removeItem('windsurfSelector_history');
-            }
+            results.style.display = 'block';
         }
         
         // ========================================
