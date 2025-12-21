@@ -7,12 +7,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Windsurf Model Selector v8.0 - Kodexalabs Edition">
+    <meta property="og:title" content="Windsurf Model Selector v9.0 - Kodexalabs Edition">
     <meta property="og:description" content="Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
-    <title>Windsurf Model Selector v8.0 - Kodexalabs Edition</title>
+    <title>Windsurf Model Selector v9.0 - Kodexalabs Edition</title>
     
     <style>
         /* ========================================
@@ -192,8 +192,31 @@
             border: 1px solid hsl(var(--border));
             border-radius: var(--radius-md);
             overflow-x: auto;
+            scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             border-bottom: 1px solid hsl(var(--border));
+        }
+        
+        /* Mobile scroll indicators */
+        .presets-bar::before,
+        .presets-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .presets-bar::before {
+            left: 0;
+            background: linear-gradient(to right, hsl(var(--secondary)), transparent);
+        }
+        
+        .presets-bar::after {
+            right: 0;
+            background: linear-gradient(to left, hsl(var(--secondary)), transparent);
         }
         
         .presets-bar .preset-btn {
@@ -409,6 +432,17 @@
             border-color: hsl(var(--foreground));
         }
         
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid hsl(var(--foreground));
+        }
+        
+        .btn-outline:hover {
+            background: hsl(var(--foreground));
+            color: hsl(var(--background));
+        }
+        
         /* ========================================
            SIDEBAR RECOMMENDATIONS - MONOCHROME
         ======================================== */
@@ -618,6 +652,379 @@
         }
         
         /* ========================================
+           ANALYSIS PROGRESS - ANIMATED UX
+        ======================================== */
+        
+        .analysis-progress {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all var(--transition-base);
+        }
+        
+        .analysis-progress.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+            opacity: 0.3;
+            transition: all var(--transition-fast);
+        }
+        
+        .progress-step.active {
+            opacity: 1;
+        }
+        
+        .progress-step.complete {
+            opacity: 1;
+        }
+        
+        .step-checkmark {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid hsl(var(--border));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .progress-step.active .step-checkmark {
+            border-color: hsl(var(--foreground));
+            background: hsl(var(--secondary));
+        }
+        
+        .progress-step.complete .step-checkmark {
+            border-color: hsl(var(--foreground));
+            background: hsl(var(--foreground));
+            color: hsl(var(--background));
+            transform: scale(1.1);
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 2px;
+        }
+        
+        .step-details {
+            font-size: 0.8rem;
+            color: hsl(var(--text-secondary));
+        }
+        
+        .feature-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-1);
+            margin-top: var(--space-2);
+        }
+        
+        .feature-pill {
+            background: hsl(var(--accent));
+            color: hsl(var(--foreground));
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.7rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: pillFadeIn 0.3s forwards;
+        }
+        
+        @keyframes pillFadeIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .model-scores {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+            margin-top: var(--space-2);
+        }
+        
+        .model-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-1) var(--space-2);
+            background: hsl(var(--secondary));
+            border-radius: var(--radius-sm);
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: scoreSlideIn 0.4s forwards;
+        }
+        
+        @keyframes scoreSlideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .model-name {
+            font-size: 0.8rem;
+            color: hsl(var(--foreground));
+        }
+        
+        .score-value {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+        
+        .ranking-slots {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-2);
+        }
+        
+        .rank-slot {
+            flex: 1;
+            padding: var(--space-2);
+            background: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-sm);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: slotPopIn 0.3s forwards;
+        }
+        
+        @keyframes slotPopIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .rank-label {
+            font-size: 0.7rem;
+            color: hsl(var(--text-muted));
+            margin-bottom: 2px;
+        }
+        
+        .rank-model {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            font-size: 0.8rem;
+        }
+        
+        /* ========================================
+           TOAST NOTIFICATIONS
+        ======================================== */
+        
+        .toast {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--foreground));
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+            color: hsl(var(--foreground));
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--transition-base);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* ========================================
+           COPY BUTTON & HISTORY
+        ======================================== */
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            background: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-sm);
+            padding: var(--space-1);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 0.8rem;
+            color: hsl(var(--text-muted));
+        }
+        
+        .copy-btn:hover {
+            background: hsl(var(--accent));
+            color: hsl(var(--foreground));
+        }
+        
+        .copy-btn.copied {
+            background: hsl(var(--foreground));
+            color: hsl(var(--background));
+        }
+        
+        .history-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .history-toggle {
+            background: none;
+            border: none;
+            color: hsl(var(--text-muted));
+            cursor: pointer;
+            padding: var(--space-1);
+            font-size: 0.9rem;
+            margin-left: var(--space-2);
+        }
+        
+        .history-toggle:hover {
+            color: hsl(var(--foreground));
+        }
+        
+        .history-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-md);
+            min-width: 250px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .history-menu.show {
+            display: block;
+        }
+        
+        .history-item {
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+            border-bottom: 1px solid hsl(var(--border));
+            font-size: 0.8rem;
+        }
+        
+        .history-item:hover {
+            background: hsl(var(--secondary));
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-text {
+            color: hsl(var(--foreground));
+            margin-bottom: 2px;
+        }
+        
+        .history-time {
+            color: hsl(var(--text-muted));
+            font-size: 0.7rem;
+        }
+        
+        .history-clear {
+            padding: var(--space-2) var(--space-3);
+            color: hsl(var(--text-muted));
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-align: center;
+            border-top: 1px solid hsl(var(--border));
+        }
+        
+        .history-clear:hover {
+            color: hsl(var(--foreground));
+        }
+        
+        /* ========================================
+           MODEL COMPARISON TABLE
+        ======================================== */
+        
+        .comparison-table {
+            margin-top: var(--space-4);
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all var(--transition-base);
+        }
+        
+        .comparison-table.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .comparison-title {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: var(--space-3);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .model-card {
+            background: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius-md);
+            padding: var(--space-3);
+        }
+        
+        .model-card.primary {
+            border-color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--foreground));
+        }
+        
+        .model-header {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: var(--space-2);
+        }
+        
+        .model-spec {
+            font-size: 0.8rem;
+            color: hsl(var(--text-secondary));
+            margin-bottom: var(--space-1);
+        }
+        
+        .model-reason {
+            font-size: 0.8rem;
+            color: hsl(var(--foreground));
+            margin-top: var(--space-2);
+        }
+        
+        /* ========================================
            RESPONSIVE DESIGN
         ======================================== */
         
@@ -666,7 +1073,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Windsurf Model Selector v8.0</h1>
+            <h1>Windsurf Model Selector v9.0</h1>
             <p class="subtitle">Smart prompt enhancement for Windsurf IDE - Analyze your task, get optimal model recommendations, and enhance your prompts with AI</p>
         </header>
         
@@ -723,10 +1130,34 @@
                         </label>
                     </div>
 
+                    <!-- Budget Mode Toggle -->
+                    <div class="auto-mode-section">
+                        <div>
+                            <div class="auto-mode-title">💰 Budget Mode</div>
+                            <div class="auto-mode-desc">Prioritize free and low-cost models</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="budgetMode">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
                     <!-- Input Section -->
                     <div class="input-section">
-                        <label class="input-label" for="taskInput">Describe your task:</label>
-                        <textarea id="taskInput" placeholder="Example: I need to debug a React component that's not rendering properly. The component should fetch user data from an API and display it in a table format."></textarea>
+                        <label class="input-label" for="taskInput">
+                            Describe your task:
+                            <div class="history-dropdown">
+                                <button class="history-toggle" id="historyToggle">🕒</button>
+                                <div class="history-menu" id="historyMenu">
+                                    <!-- History items will be populated here -->
+                                    <div class="history-clear" id="clearHistory">Clear History</div>
+                                </div>
+                            </div>
+                        </label>
+                        <div class="input-wrapper">
+                            <textarea id="taskInput" placeholder="Example: I need to debug a React component that's not rendering properly. The component should fetch user data from an API and display it in a table format."></textarea>
+                            <button class="copy-btn" id="copyBtn" title="Copy to clipboard">📋</button>
+                        </div>
                         <div class="input-hint">💡 Be specific about your requirements for better model recommendations</div>
                     </div>
 
@@ -735,9 +1166,59 @@
                         <button class="btn btn-primary btn-full" id="analyzeBtn">
                             🔍 Analyze Task
                         </button>
+                        <button class="btn btn-outline" id="optimizeBtn">
+                            ✨ Optimize
+                        </button>
                         <button class="btn btn-secondary" id="clearBtn">
                             Clear
                         </button>
+                    </div>
+
+                    <!-- Analysis Progress Card -->
+                    <div id="analysisProgress" class="analysis-progress">
+                        <div class="progress-step" id="step1">
+                            <div class="step-checkmark">1</div>
+                            <div class="step-content">
+                                <div class="step-title">🔍 Extracting task features...</div>
+                                <div class="step-details">
+                                    <div id="detectedFeatures" class="feature-pills">
+                                        <!-- Feature pills will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-step" id="step2">
+                            <div class="step-checkmark">2</div>
+                            <div class="step-content">
+                                <div class="step-title">⚖️ Scoring models...</div>
+                                <div class="step-details">
+                                    <div id="modelScores" class="model-scores">
+                                        <!-- Model scores will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-step" id="step3">
+                            <div class="step-checkmark">3</div>
+                            <div class="step-content">
+                                <div class="step-title">🎯 Ranking recommendations...</div>
+                                <div class="step-details">
+                                    <div id="rankingSlots" class="ranking-slots">
+                                        <!-- Ranking slots will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-step" id="step4">
+                            <div class="step-checkmark">4</div>
+                            <div class="step-content">
+                                <div class="step-title">✅ Analysis complete</div>
+                                <div class="step-details">Ready to show recommendations</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Results Section -->
@@ -766,7 +1247,7 @@
 
     <script>
         // ========================================
-        // KODEXALABS WINDSURF MODEL SELECTOR v8.0
+        // KODEXALABS WINDSURF MODEL SELECTOR v9.0
         // Smart Scoring Engine - December 2025
         // ========================================
 
@@ -1082,10 +1563,10 @@
         function getRankedModelsForTask(task) {
             const features = analyzeTaskFeatures(task);
             
-            // Score all models
+            // Score all models with budget mode consideration
             const scoredModels = models.map(model => ({
                 model: model,
-                score: scoreModelForTask(model, features),
+                score: scoreModelForTaskWithBudget(model, features),
                 features: features
             }));
 
@@ -1276,68 +1757,566 @@
             // Build external links HTML
             const buildLinks = (m) => {
                 let links = '';
-                if (m.docsUrl) {
-                    links += `<a href="${m.docsUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📄 Docs</a>`;
-                }
-                if (m.guideUrl) {
-                    links += `<a href="${m.guideUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline; margin-right: var(--space-2);">📖 Guide</a>`;
-                }
-                if (m.communityUrl) {
-                    links += `<a href="${m.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
-                }
-                return links;
-            };
+        }
+        if (model.communityUrl) {
+            links += `<a href="${model.communityUrl}" target="_blank" rel="noopener" style="font-size: 0.75rem; color: hsl(var(--text-muted)); text-decoration: underline;">💬 Reddit</a>`;
+                
+                history.unshift(entry);
+                if (history.length > 5) history.pop();
+                this.set('windsurfSelector_history', history);
+            }
             
-            recommendation.innerHTML = `
-                <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
-                    <div style="font-size: 2rem; font-weight: 800; color: hsl(var(--foreground));">${model.rank}</div>
-                    <div>
-                        <h3 style="margin-bottom: var(--space-1);">${model.name}</h3>
-                        <span class="category-indicator category-${model.category}">${model.category}</span>
-                    </div>
+            static getHistory() {
+                return this.get('windsurfSelector_history', []);
+            }
+            
+            static clearHistory() {
+                localStorage.removeItem('windsurfSelector_history');
+            }
+        }
+        
+        // ========================================
+        // PROMPT OPTIMIZATION ENGINE
+        // ========================================
+        
+        class PromptOptimizer {
+            static optimize(text) {
+                let optimized = text;
+                
+                // Add @CascadeProjects tag if files/repo mentioned
+                if (/\b(file|files|repo|repository|directory|folder|d:\\|\\dev\\)/i.test(optimized)) {
+                    optimized = '@CascadeProjects\n\n' + optimized;
+                }
+                
+                // Convert vague phrases to specific instructions
+                const replacements = [
+                    { from: /update\s+the\s+models/gi, to: 'Update the models array in d:\\dev\\CascadeProjects\\windsurf-model-selector\\index.html' },
+                    { from: /make\s+sure\s+they're\s+current/gi, to: 'to reflect December 2025 Windsurf model availability' },
+                    { from: /fix\s+the\s+bug/gi, to: 'Debug and fix the issue in' },
+                    { from: /add\s+the\s+feature/gi, to: 'Implement the new feature in' },
+                    { from: /check\s+if\s+it\s+works/gi, to: 'Verify the implementation works correctly and test all functionality' },
+                    { from: /deploy\s+it/gi, to: 'Deploy to GitHub Pages when complete' }
+                ];
+                
+                replacements.forEach(({ from, to }) => {
+                    optimized = optimized.replace(from, to);
+                });
+                
+                // Break long sentences into numbered steps
+                if (optimized.length > 100 && !/\d+\./.test(optimized)) {
+                    const sentences = optimized.split(/[.!?]+/).filter(s => s.trim());
+                    if (sentences.length > 2) {
+                        optimized = sentences.map((s, i) => `${i + 1}. ${s.trim()}`).join('\n');
+                    }
+                }
+                
+                // Add constraints if not present
+                if (!/DO NOT|do not/gi.test(optimized) && /change|modify|update|edit/gi.test(optimized)) {
+                    optimized += '\n\nDo NOT change the core scoring engine logic or UI layout unless explicitly requested.';
+                }
+                
+                // Add validation for deployment changes
+                if (/deploy|push|commit/gi.test(optimized) && !/confirm|verify|test/gi.test(optimized)) {
+                    optimized += '\n\nTest locally before deploying and verify all functionality works.';
+                }
+                
+                return optimized;
+            }
+        }
+        
+        // ========================================
+        // ANIMATED ANALYSIS ORCHESTRATOR
+        // ========================================
+        
+        class AnalysisOrchestrator {
+            static async analyzeWithAnimation(task) {
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                const progressCard = document.getElementById('analysisProgress');
+                const results = document.getElementById('results');
+                
+                // Disable button and show progress
+                analyzeBtn.disabled = true;
+                analyzeBtn.textContent = '🔄 Analyzing...';
+                results.style.display = 'none';
+                progressCard.classList.add('active');
+                
+                // Clear previous progress
+                this.clearProgress();
+                
+                try {
+                    // Step 1: Extract features (400ms)
+                    await this.animateStep(1, 'active');
+                    const features = analyzeTaskFeatures(task);
+                    this.displayFeatures(features);
+                    await this.delay(400);
+                    this.completeStep(1);
+                    
+                    // Step 2: Score models (800ms)
+                    await this.animateStep(2, 'active');
+                    const scoredModels = this.scoreAllModels(task, features);
+                    this.displayScores(scoredModels);
+                    await this.delay(800);
+                    this.completeStep(2);
+                    
+                    // Step 3: Rank recommendations (500ms)
+                    await this.animateStep(3, 'active');
+                    const ranked = getRankedModelsForTask(task);
+                    this.displayRanking(ranked);
+                    await this.delay(500);
+                    this.completeStep(3);
+                    
+                    // Step 4: Complete (300ms)
+                    await this.animateStep(4, 'active');
+                    await this.delay(300);
+                    this.completeStep(4);
+                    
+                    // Show final results
+                    await this.delay(200);
+                    progressCard.classList.remove('active');
+                    showRecommendationWithFallbacks(task);
+                    
+                    // Add to history
+                    StorageManager.addToHistory(task);
+                    updateHistoryDropdown();
+                    
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                    showToast('❌ Analysis failed. Please try again.');
+                } finally {
+                    // Reset button
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.textContent = '🔍 Analyze Task';
+                }
+            }
+            
+            static clearProgress() {
+                document.getElementById('detectedFeatures').innerHTML = '';
+                document.getElementById('modelScores').innerHTML = '';
+                document.getElementById('rankingSlots').innerHTML = '';
+                
+                for (let i = 1; i <= 4; i++) {
+                    const step = document.getElementById(`step${i}`);
+                    step.classList.remove('active', 'complete');
+                    const checkmark = step.querySelector('.step-checkmark');
+                    checkmark.textContent = i;
+                }
+            }
+            
+            static animateStep(stepNum, state) {
+                return new Promise(resolve => {
+                    const step = document.getElementById(`step${stepNum}`);
+                    step.classList.add(state);
+                    resolve();
+                });
+            }
+            
+            static completeStep(stepNum) {
+                const step = document.getElementById(`step${stepNum}`);
+                step.classList.remove('active');
+                step.classList.add('complete');
+                const checkmark = step.querySelector('.step-checkmark');
+                checkmark.textContent = '✅';
+            }
+            
+            static displayFeatures(features) {
+                const container = document.getElementById('detectedFeatures');
+                const activeFeatures = Object.entries(features)
+                    .filter(([key, value]) => value > 0)
+                    .map(([key]) => key);
+                
+                activeFeatures.forEach((feature, index) => {
+                    setTimeout(() => {
+                        const pill = document.createElement('div');
+                        pill.className = 'feature-pill';
+                        pill.textContent = feature.replace(/([A-Z])/g, ' $1').trim();
+                        pill.style.animationDelay = `${index * 50}ms`;
+                        container.appendChild(pill);
+                    }, index * 100);
+                });
+            }
+            
+            static scoreAllModels(task, features) {
+                return models.map(model => ({
+                    model,
+                    score: scoreModelForTaskWithBudget(model, features)
+                })).sort((a, b) => b.score - a.score);
+            }
+            
+            static displayScores(scoredModels) {
+                const container = document.getElementById('modelScores');
+                
+                scoredModels.forEach((item, index) => {
+                    setTimeout(() => {
+                        const scoreDiv = document.createElement('div');
+                        scoreDiv.className = 'model-score';
+                        scoreDiv.style.animationDelay = `${index * 100}ms`;
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'model-name';
+                        nameSpan.textContent = item.model.name;
+                        
+                        const scoreSpan = document.createElement('span');
+                        scoreSpan.className = 'score-value';
+                        scoreSpan.textContent = `${item.score} pts`;
+                        
+                        scoreDiv.appendChild(nameSpan);
+                        scoreDiv.appendChild(scoreSpan);
+                        container.appendChild(scoreDiv);
+                        
+                        // Animate score counting
+                        this.animateScore(scoreSpan, item.score);
+                    }, index * 150);
+                });
+            }
+            
+            static animateScore(element, targetScore) {
+                let currentScore = 0;
+                const increment = targetScore / 20;
+                const timer = setInterval(() => {
+                    currentScore += increment;
+                    if (currentScore >= targetScore) {
+                        currentScore = targetScore;
+                        clearInterval(timer);
+                    }
+                    element.textContent = `${Math.round(currentScore)} pts`;
+                }, 15);
+            }
+            
+            static displayRanking(ranked) {
+                const container = document.getElementById('rankingSlots');
+                const labels = ['Primary A', 'Fallback B', 'Budget C'];
+                
+                [ranked.primary, ranked.fallbackB, ranked.fallbackC].forEach((model, index) => {
+                    setTimeout(() => {
+                        const slot = document.createElement('div');
+                        slot.className = 'rank-slot';
+                        slot.style.animationDelay = `${index * 100}ms`;
+                        
+                        const labelDiv = document.createElement('div');
+                        labelDiv.className = 'rank-label';
+                        labelDiv.textContent = labels[index];
+                        
+                        const modelDiv = document.createElement('div');
+                        modelDiv.className = 'rank-model';
+                        modelDiv.textContent = model.name;
+                        
+                        slot.appendChild(labelDiv);
+                        slot.appendChild(modelDiv);
+                        container.appendChild(slot);
+                    }, index * 150);
+                });
+            }
+            
+            static delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+        
+        // ========================================
+        // TOAST NOTIFICATIONS
+        // ========================================
+        
+        function showToast(message) {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // ========================================
+        // HISTORY DROPDOWN
+        // ========================================
+        
+        function updateHistoryDropdown() {
+            const menu = document.getElementById('historyMenu');
+            const history = StorageManager.getHistory();
+            
+            // Clear existing items (except clear button)
+            const items = menu.querySelectorAll('.history-item');
+            items.forEach(item => item.remove());
+            
+            // Add history items
+            history.forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-text">${entry.text}</div>
+                    <div class="history-time">${new Date(entry.timestamp).toLocaleTimeString()}</div>
+                `;
+                item.addEventListener('click', () => {
+                    document.getElementById('taskInput').value = entry.fullText;
+                    menu.classList.remove('show');
+                });
+                
+                menu.insertBefore(item, menu.lastElementChild);
+            });
+        }
+        
+        // ========================================
+        // ENHANCED SCORING WITH BUDGET MODE
+        // ========================================
+        
+        function scoreModelForTaskWithBudget(model, features) {
+            const baseScore = scoreModelForTask(model, features);
+            const budgetMode = document.getElementById('budgetMode').checked;
+            
+            if (!budgetMode) return baseScore;
+            
+            // Apply budget mode modifiers
+            switch (model.costTier) {
+                case 1: return baseScore + 10;  // Free models get +10
+                case 2: return baseScore + 5;   // Low cost get +5
+                case 3: return baseScore - 5;   // Premium get -5
+                default: return baseScore;
+            }
+        }
+        
+        // ========================================
+        // COPY TO CLIPBOARD
+        // ========================================
+        
+        async function copyToClipboard() {
+            const textarea = document.getElementById('taskInput');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            try {
+                await navigator.clipboard.writeText(textarea.value);
+                copyBtn.classList.add('copied');
+                copyBtn.textContent = '✅';
+                
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.textContent = '📋';
+                }, 2000);
+                
+                showToast('✅ Copied to clipboard');
+            } catch (error) {
+                showToast('❌ Failed to copy');
+            }
+        }
+        
+        // ========================================
+        // MODEL COMPARISON
+        // ========================================
+        
+        function toggleComparison() {
+            const comparisonTable = document.getElementById('comparisonTable');
+            if (!comparisonTable) {
+                createComparisonTable();
+            }
+            
+            const isVisible = comparisonTable.classList.contains('show');
+            comparisonTable.classList.toggle('show', !isVisible);
+        }
+        
+        function createComparisonTable() {
+            const results = document.getElementById('results');
+            const table = document.createElement('div');
+            table.id = 'comparisonTable';
+            table.className = 'comparison-table';
+            
+            const task = document.getElementById('taskInput').value;
+            const ranked = getRankedModelsForTask(task);
+            
+            table.innerHTML = `
+                <div class="comparison-title">⚖️ Model Comparison</div>
+                <div class="comparison-grid">
+                    ${createModelCard(ranked.primary, 'Primary (A)', true)}
+                    ${createModelCard(ranked.fallbackB, 'Fallback (B)', false)}
+                    ${createModelCard(ranked.fallbackC, 'Budget (C)', false)}
                 </div>
-                <p style="margin-bottom: var(--space-3); color: hsl(var(--text-secondary));">${model.description}</p>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);">
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Context</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.context}</div>
-                    </div>
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Speed</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.speed}</div>
-                    </div>
-                    <div style="text-align: center; padding: var(--space-2); background: hsl(var(--secondary)); border-radius: var(--radius-md);">
-                        <div style="font-size: 0.8rem; color: hsl(var(--text-muted));">Cost</div>
-                        <div style="font-weight: 600; color: hsl(var(--foreground));">${model.cost}</div>
-                    </div>
-                </div>
-                <div style="margin-bottom: var(--space-3);">
-                    <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-2); color: hsl(var(--foreground));">Strengths:</div>
-                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-                        ${model.strengths.map(strength => `
-                            <span class="status-indicator status-success">${strength.replace(/-/g, ' ')}</span>
-                        `).join('')}
-                    </div>
-                </div>
-                <div style="margin-bottom: var(--space-3);">
-                    ${buildLinks(model)}
-                </div>
-                <button class="btn btn-primary btn-full" onclick="selectModel('${model.name}')">
-                    Select This Model
-                </button>
+                <button class="btn btn-secondary" style="margin-top: var(--space-3);" onclick="toggleComparison()">Hide Comparison</button>
             `;
             
-            results.style.display = 'block';
+            results.appendChild(table);
         }
+        
+        function createModelCard(model, label, isPrimary) {
+            const cardClass = isPrimary ? 'model-card primary' : 'model-card';
+            return `
+                <div class="${cardClass}">
+                    <div class="model-header">${label}: ${model.name}</div>
+                    <div class="model-spec">Context: ${model.context}</div>
+                    <div class="model-spec">Speed: ${model.speed}</div>
+                    <div class="model-spec">Cost: ${model.cost}</div>
+                    <div class="model-reason">${generateReasoning(model, analyzeTaskFeatures(document.getElementById('taskInput').value))}</div>
+                </div>
+            `;
+        }
+        
+        // ========================================
+        // EXPORT AS MARKDOWN
+        // ========================================
+        
+        function exportAsMarkdown() {
+            const task = document.getElementById('taskInput').value;
+            const ranked = getRankedModelsForTask(task);
+            const features = analyzeTaskFeatures(task);
+            const timestamp = new Date().toISOString();
+            
+            const markdown = `# Windsurf Model Recommendation
+**Date:** ${new Date(timestamp).toLocaleString()}
 
+## Task
+${task}
+
+## Recommended Model
+**Primary (A):** ${ranked.primary.name}
+
+**Reasoning:** ${generateReasoning(ranked.primary, features)}
+
+**Context:** ${ranked.primary.context}
+
+**Speed:** ${ranked.primary.speed}
+
+**Cost:** ${ranked.primary.cost}
+
+## Fallback Options
+- **B:** ${ranked.fallbackB.name} - ${generateReasoning(ranked.fallbackB, features)}
+- **C:** ${ranked.fallbackC.name} - ${generateReasoning(ranked.fallbackC, features)}
+
+## Detected Features
+${Object.entries(features).filter(([k, v]) => v > 0).map(([k]) => `- ${k}`).join('\n')}
+`;
+            
+            const blob = new Blob([markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `windsurf-recommendation-${timestamp.replace(/[:.]/g, '-')}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('📄 Exported as Markdown');
+        }
+        
         // ========================================
         // INITIALIZATION
         // ========================================
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize existing features
             initializePresets();
             populateRecommendations();
-            initializeAnalyzer();
+            
+            // Restore budget mode state
+            const budgetMode = StorageManager.get('windsurfSelector_budgetMode', false);
+            document.getElementById('budgetMode').checked = budgetMode;
+            
+            // Initialize history dropdown
+            updateHistoryDropdown();
+            
+            // Enhanced analyzer with animation
+            initializeAnalyzerV9();
+            
+            // Initialize new features
+            initializeOptimizeButton();
+            initializeCopyButton();
+            initializeHistoryDropdown();
+            initializeBudgetMode();
         });
+        
+        function initializeAnalyzerV9() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const taskInput = document.getElementById('taskInput');
+            
+            analyzeBtn.addEventListener('click', () => {
+                const task = taskInput.value.trim();
+                if (!task) {
+                    showToast('Please describe your task first.');
+                    return;
+                }
+                AnalysisOrchestrator.analyzeWithAnimation(task);
+            });
+            
+            clearBtn.addEventListener('click', () => {
+                taskInput.value = '';
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('analysisProgress').classList.remove('active');
+            });
+        }
+        
+        function initializeOptimizeButton() {
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            const taskInput = document.getElementById('taskInput');
+            
+            optimizeBtn.addEventListener('click', () => {
+                const currentText = taskInput.value;
+                if (!currentText.trim()) {
+                    showToast('Please enter a task to optimize.');
+                    return;
+                }
+                
+                const optimized = PromptOptimizer.optimize(currentText);
+                taskInput.value = optimized;
+                
+                // Highlight animation
+                taskInput.style.animation = 'pulse 0.5s';
+                setTimeout(() => {
+                    taskInput.style.animation = '';
+                }, 500);
+                
+                showToast('✅ Prompt optimized for Windsurf');
+            });
+        }
+        
+        function initializeCopyButton() {
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.addEventListener('click', copyToClipboard);
+        }
+        
+        function initializeHistoryDropdown() {
+            const toggle = document.getElementById('historyToggle');
+            const menu = document.getElementById('historyMenu');
+            const clearBtn = document.getElementById('clearHistory');
+            
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+            });
+            
+            clearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                StorageManager.clearHistory();
+                updateHistoryDropdown();
+                showToast('History cleared');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.history-dropdown')) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+        
+        function initializeBudgetMode() {
+            const budgetToggle = document.getElementById('budgetMode');
+            budgetToggle.addEventListener('change', () => {
+                StorageManager.set('windsurfSelector_budgetMode', budgetToggle.checked);
+            });
+        }
+        
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { background-color: hsl(var(--input)); }
+                50% { background-color: hsl(var(--accent)); }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Preset functionality
         function initializePresets() {
