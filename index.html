@@ -1650,6 +1650,7 @@
             
             const results = document.getElementById('results');
             const recommendation = document.getElementById('recommendation');
+            const budgetMode = document.getElementById('budgetMode').checked;
 
             // Build external links HTML
             const buildLinks = (model) => {
@@ -1686,8 +1687,11 @@
                 <div style="margin-bottom: var(--space-4);">
                     <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2);">
                         <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); background: hsl(var(--secondary)); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); border: 2px solid hsl(var(--foreground));">A</div>
-                        <div>
-                            <h3 style="margin-bottom: var(--space-1); font-size: 1.1rem;">${primary.name}</h3>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1);">
+                                <h3 style="margin: 0; font-size: 1.1rem;">${primary.name}</h3>
+                                ${budgetMode ? '<span class="status-indicator status-info" style="font-size: 0.7rem;">💰 Budget Mode Active</span>' : ''}
+                            </div>
                             <span class="category-indicator category-${primary.category}">${primary.category}</span>
                         </div>
                     </div>
@@ -1789,7 +1793,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
                     <div>
                         <div style="font-size: 1.1rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: var(--space-1);">
-                            🎯 ${model.name}
+                            ${model.name}
                         </div>
                         <div style="font-size: 0.9rem; color: hsl(var(--text-secondary)); margin-bottom: var(--space-2);">
                             ${model.description}
@@ -2154,12 +2158,23 @@
             if (!budgetMode) return baseScore;
             
             // Apply budget mode modifiers
+            let finalScore = baseScore;
             switch (model.costTier) {
-                case 1: return baseScore + 10;  // Free models get +10
-                case 2: return baseScore + 5;   // Low cost get +5
-                case 3: return baseScore - 5;   // Premium get -5
-                default: return baseScore;
+                case 1: 
+                    finalScore = baseScore + 10;  // Free models get +10
+                    break;
+                case 2: 
+                    finalScore = baseScore + 5;   // Low cost get +5
+                    break;
+                case 3: 
+                    finalScore = baseScore - 5;   // Premium get -5
+                    break;
             }
+            
+            // Temporary: Log budget mode scoring for testing
+            console.log(`Budget Mode: ${model.name} (${model.costTier}) - Base: ${baseScore} → Final: ${finalScore}`);
+            
+            return finalScore;
         }
         
         // ========================================
